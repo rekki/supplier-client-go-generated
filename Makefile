@@ -1,5 +1,5 @@
-.PHONY: generate-supplier
-generate-supplier:
+.PHONY: generate-client
+generate-client:
 	#-i https://api.rekki.com/swagger/doc.json
 	@docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
 		-i https://external-supplier-api.feat.eu-west-2.rekki.com/swagger/doc.json \
@@ -10,15 +10,16 @@ generate-supplier:
 		-o /local/client \
 		-p enumClassPrefix=true \
 		-p withGoCodegenComment=true
+	@sudo chown -R dima:dima .
+	@rm -rf docs
 	@mv client/go.* .
-	@rm docs
 	@mv client/docs .
 	@mv client/.gitignore .
 	@mv client/README.md .
 	@rm client/.travis.yml
 
-.PHONY: validate-supplier
-validate-supplier:
+.PHONY: validate-client
+validate-client:
 	#-i https://api.rekki.com/swagger/doc.json
 	@docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli validate \
 		-i https://external-supplier-api.feat.eu-west-2.rekki.com/swagger/doc.json
