@@ -31,33 +31,33 @@ import "./client"
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://external-supplier-api.feat.eu-west-2.rekki.com/api*
+All URIs are relative to *https://api.rekki.com/api*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*DefaultApi* | [**ConfirmOrders**](docs/DefaultApi.md#confirmorders) | **Post** /integration/v1/orders/confirm | Confirm a pending order by its reference code.
-*DefaultApi* | [**ConfirmOrdersV3**](docs/DefaultApi.md#confirmordersv3) | **Post** /integration/v3/orders/confirm | Confirm a pending order by its reference code.
-*DefaultApi* | [**DeleteCatalogItem**](docs/DefaultApi.md#deletecatalogitem) | **Delete** /integration/v1/catalog/items/{id} | Delete an item from catalog
-*DefaultApi* | [**DeleteCatalogItemsV3**](docs/DefaultApi.md#deletecatalogitemsv3) | **Post** /integration/v3/catalog/items/delete | Delete items from catalog
-*DefaultApi* | [**GetCatalogItem**](docs/DefaultApi.md#getcatalogitem) | **Get** /integration/v1/catalog/items/{id} | Lists all orders placed for the supplier that were placed through REKKI.
-*DefaultApi* | [**GetCatalogItemV3**](docs/DefaultApi.md#getcatalogitemv3) | **Get** /integration/v3/catalog/items/{id} | Fetch a specific catalog item by its Id.
-*DefaultApi* | [**GetCatalogItems**](docs/DefaultApi.md#getcatalogitems) | **Get** /integration/v1/catalog/items | Get catalog items for authenticated supplier
-*DefaultApi* | [**GetCatalogItemsV3**](docs/DefaultApi.md#getcatalogitemsv3) | **Get** /integration/v3/catalog/items | Get catalog items for authenticated supplier
-*DefaultApi* | [**ListNotIntegratedOrders**](docs/DefaultApi.md#listnotintegratedorders) | **Post** /integration/v1/orders/list_not_integrated | Lists all orders placed for the supplier that were placed through REKKI and not marked as integrated.
-*DefaultApi* | [**ListOrdersBySupplier**](docs/DefaultApi.md#listordersbysupplier) | **Post** /integration/v1/orders/list | Lists all orders placed for the supplier that were placed through REKKI.
-*DefaultApi* | [**ListOrdersBySupplierV3**](docs/DefaultApi.md#listordersbysupplierv3) | **Post** /integration/v3/orders/list | Lists all orders placed for the supplier that were placed through REKKI.
-*DefaultApi* | [**MarkIntegrationError**](docs/DefaultApi.md#markintegrationerror) | **Post** /integration/v1/orders/set_error | Report failure to integrate an order
-*DefaultApi* | [**MarkIntegrationErrorV3**](docs/DefaultApi.md#markintegrationerrorv3) | **Post** /integration/v3/orders/set_error | Report failure to integrate an order
-*DefaultApi* | [**MarkOrdersIntegrated**](docs/DefaultApi.md#markordersintegrated) | **Post** /integration/v1/orders/set_integrated | Mark orders as integrated
-*DefaultApi* | [**MarkOrdersIntegratedV3**](docs/DefaultApi.md#markordersintegratedv3) | **Post** /integration/v3/orders/set_integrated | Mark orders as integrated
-*DefaultApi* | [**PostLogMessage**](docs/DefaultApi.md#postlogmessage) | **Post** /integration/v1/log | Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
-*DefaultApi* | [**PostLogMessageV3**](docs/DefaultApi.md#postlogmessagev3) | **Post** /integration/v3/log | Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
-*DefaultApi* | [**ReplaceCatalog**](docs/DefaultApi.md#replacecatalog) | **Post** /integration/v1/catalog/replace | Drop all existing items from the catalog and upload new ones
-*DefaultApi* | [**ReplaceCatalogV3**](docs/DefaultApi.md#replacecatalogv3) | **Post** /integration/v3/catalog/replace | Drop all existing items from the catalog and upload new ones
-*DefaultApi* | [**UpdateCatalogItem**](docs/DefaultApi.md#updatecatalogitem) | **Post** /integration/v1/catalog/items | Creates or Updates an item on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
-*DefaultApi* | [**UpdateCatalogItemAvailability**](docs/DefaultApi.md#updatecatalogitemavailability) | **Post** /integration/v2/catalog/items/availability | Update availability status for one of the items in the catalog
-*DefaultApi* | [**UpdateCatalogItemAvailabilityV3**](docs/DefaultApi.md#updatecatalogitemavailabilityv3) | **Post** /integration/v3/catalog/items/availability | Update availability status for one of the items in the catalog
-*DefaultApi* | [**UpdateCatalogItemsV3**](docs/DefaultApi.md#updatecatalogitemsv3) | **Post** /integration/v3/catalog/items | Creates or Updates multiple items on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
+*CatalogApi* | [**DeleteCatalogItem**](docs/CatalogApi.md#deletecatalogitem) | **Delete** /integration/v1/catalog/items/{id} | Delete an item from catalog
+*CatalogApi* | [**DeleteCatalogItemsV3**](docs/CatalogApi.md#deletecatalogitemsv3) | **Post** /integration/v3/catalog/items/delete | Delete items from catalog
+*CatalogApi* | [**GetCatalogItem**](docs/CatalogApi.md#getcatalogitem) | **Get** /integration/v1/catalog/items/{id} | Lists all orders placed for the supplier that were placed through REKKI.
+*CatalogApi* | [**GetCatalogItemV3**](docs/CatalogApi.md#getcatalogitemv3) | **Get** /integration/v3/catalog/items/{id} | Fetch a specific catalog item by its Id.
+*CatalogApi* | [**GetCatalogItems**](docs/CatalogApi.md#getcatalogitems) | **Get** /integration/v1/catalog/items | Get catalog items for authenticated supplier
+*CatalogApi* | [**GetCatalogItemsV3**](docs/CatalogApi.md#getcatalogitemsv3) | **Get** /integration/v3/catalog/items | Get catalog items for authenticated supplier
+*CatalogApi* | [**ReplaceCatalog**](docs/CatalogApi.md#replacecatalog) | **Post** /integration/v1/catalog/replace | Drop all existing items from the catalog and upload new ones
+*CatalogApi* | [**ReplaceCatalogV3**](docs/CatalogApi.md#replacecatalogv3) | **Post** /integration/v3/catalog/replace | Drop all existing items from the catalog and upload new ones
+*CatalogApi* | [**UpdateCatalogItem**](docs/CatalogApi.md#updatecatalogitem) | **Post** /integration/v1/catalog/items | Creates or Updates an item on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
+*CatalogApi* | [**UpdateCatalogItemAvailability**](docs/CatalogApi.md#updatecatalogitemavailability) | **Post** /integration/v2/catalog/items/availability | Update availability status for one of the items in the catalog
+*CatalogApi* | [**UpdateCatalogItemAvailabilityV3**](docs/CatalogApi.md#updatecatalogitemavailabilityv3) | **Post** /integration/v3/catalog/items/availability | Update availability status for one of the items in the catalog
+*CatalogApi* | [**UpdateCatalogItemsV3**](docs/CatalogApi.md#updatecatalogitemsv3) | **Post** /integration/v3/catalog/items | Creates or Updates multiple items on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
+*GeneralApi* | [**PostLogMessage**](docs/GeneralApi.md#postlogmessage) | **Post** /integration/v1/log | Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
+*GeneralApi* | [**PostLogMessageV3**](docs/GeneralApi.md#postlogmessagev3) | **Post** /integration/v3/log | Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
+*OrdersApi* | [**ConfirmOrders**](docs/OrdersApi.md#confirmorders) | **Post** /integration/v1/orders/confirm | Confirm a pending order by its reference code.
+*OrdersApi* | [**ConfirmOrdersV3**](docs/OrdersApi.md#confirmordersv3) | **Post** /integration/v3/orders/confirm | Confirm a pending order by its reference code.
+*OrdersApi* | [**ListNotIntegratedOrders**](docs/OrdersApi.md#listnotintegratedorders) | **Post** /integration/v1/orders/list_not_integrated | Lists all orders placed for the supplier that were placed through REKKI and not marked as integrated.
+*OrdersApi* | [**ListOrdersBySupplier**](docs/OrdersApi.md#listordersbysupplier) | **Post** /integration/v1/orders/list | Lists all orders placed for the supplier that were placed through REKKI.
+*OrdersApi* | [**ListOrdersBySupplierV3**](docs/OrdersApi.md#listordersbysupplierv3) | **Post** /integration/v3/orders/list | Lists all orders placed for the supplier that were placed through REKKI.
+*OrdersApi* | [**MarkIntegrationError**](docs/OrdersApi.md#markintegrationerror) | **Post** /integration/v1/orders/set_error | Report failure to integrate an order
+*OrdersApi* | [**MarkIntegrationErrorV3**](docs/OrdersApi.md#markintegrationerrorv3) | **Post** /integration/v3/orders/set_error | Report failure to integrate an order
+*OrdersApi* | [**MarkOrdersIntegrated**](docs/OrdersApi.md#markordersintegrated) | **Post** /integration/v1/orders/set_integrated | Mark orders as integrated
+*OrdersApi* | [**MarkOrdersIntegratedV3**](docs/OrdersApi.md#markordersintegratedv3) | **Post** /integration/v3/orders/set_integrated | Mark orders as integrated
 
 
 ## Documentation For Models

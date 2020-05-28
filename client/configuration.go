@@ -84,13 +84,13 @@ type Configuration struct {
 // NewConfiguration returns a new Configuration object
 func NewConfiguration() *Configuration {
 	cfg := &Configuration{
-		BasePath:      "https://external-supplier-api.feat.eu-west-2.rekki.com/api",
+		BasePath:      "https://api.rekki.com/api",
 		DefaultHeader: make(map[string]string),
 		UserAgent:     "OpenAPI-Generator/1.0.0/go",
 		Debug:         false,
 		Servers:       []ServerConfiguration{
 			{
-				Url: "https://external-supplier-api.feat.eu-west-2.rekki.com/api",
+				Url: "https://api.rekki.com/api",
 				Description: "No description provided",
 			},
 		},
