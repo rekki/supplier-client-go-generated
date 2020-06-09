@@ -1265,7 +1265,7 @@ func (a *CatalogApiService) UpdateCatalogItemAvailabilityV3(ctx _context.Context
 			error: localVarHTTPResponse.Status,
 		}
 		if localVarHTTPResponse.StatusCode == 400 {
-			var v V3GenericErrorResponse
+			var v V3AvailabilityErrorResponse
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()

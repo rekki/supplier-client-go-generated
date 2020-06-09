@@ -929,7 +929,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/v3.GenericErrorResponse'
+                $ref: '#/components/schemas/v3.AvailabilityErrorResponse'
           description: Bad Request
         "401":
           content:
@@ -2119,6 +2119,20 @@ components:
             peanuts".
           type: string
       type: object
+    v3.AvailabilityError:
+      properties:
+        error:
+          type: string
+        item:
+          $ref: '#/components/schemas/v3.StockItemState'
+      type: object
+    v3.AvailabilityErrorResponse:
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/v3.AvailabilityError'
+          type: array
+      type: object
     v3.CatalogItems:
       example:
         data:
@@ -2221,6 +2235,22 @@ components:
             type: integer
           type: array
       type: object
+    v3.DeliveryAddress:
+      example:
+        country: country
+        address: address
+        city: city
+        postcode: postcode
+      properties:
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        postcode:
+          type: string
+      type: object
     v3.FailedOrderError:
       properties:
         error:
@@ -2240,6 +2270,92 @@ components:
             "info", "debug", "trace"'
           type: string
         message:
+          type: string
+      type: object
+    v3.Order:
+      example:
+        contact_name: contact_name
+        delivery_address:
+          country: country
+          address: address
+          city: city
+          postcode: postcode
+        notes: notes
+        customer_account_no: customer_account_no
+        contact_info: contact_info
+        delivery_on: 2020-06-01
+        reference: reference
+        location_name: location_name
+        inserted_at_ts: 0
+        confirmed_at: 2019-08-12T12:20:10-07:00
+        inserted_at: inserted_at
+        items:
+        - quantity: 1.4658129805029452
+          price: price
+          name: name
+          price_cents: 6
+          id: id
+          units: units
+          product_code: product_code
+          spec: spec
+        - quantity: 1.4658129805029452
+          price: price
+          name: name
+          price_cents: 6
+          id: id
+          units: units
+          product_code: product_code
+          spec: spec
+        supplier_notes: supplier_notes
+      properties:
+        confirmed_at:
+          description: the time at which the supplier confirmed the order (via email,
+            or via the REKKI supplier app, or via the REKKI API)
+          example: 2019-08-12T12:20:10-07:00
+          type: string
+        contact_info:
+          description: the phone number or email address for the person who placed
+            the order
+          type: string
+        contact_name:
+          description: the full name of the person who placed the order
+          type: string
+        customer_account_no:
+          description: the account number for customer within the supplier system,
+            this can be setup in REKKI supplier app ( https://supplier.rekki.com ).
+          type: string
+        delivery_address:
+          $ref: '#/components/schemas/v3.DeliveryAddress'
+        delivery_on:
+          description: expected delivery date (when users place orders they specify
+            for which day it is supposed to be delivered)
+          example: 2020-06-01
+          type: string
+        inserted_at:
+          description: when was the order created by the customer (ISO date time)
+          type: string
+        inserted_at_ts:
+          description: when was the order created by the customer (unix timestamp
+            in seconds)
+          type: integer
+        items:
+          description: items requests in this order
+          items:
+            $ref: '#/components/schemas/integration.OrderItem'
+          type: array
+        location_name:
+          description: the name of the location that placed the order, can be NULL
+          type: string
+        notes:
+          description: defined by the user at the moment of making an order and usually
+            refer to that specific order (e.g. "please send fresher tomatoes")
+          type: string
+        reference:
+          description: REKKI's order reference
+          type: string
+        supplier_notes:
+          description: 'notes define by the user for the supplier, usually being common
+            across orders (e.g.: "please use the side entrance for delivery")'
           type: string
       type: object
     v3.OrderCutoffTimes:
@@ -2299,7 +2415,11 @@ components:
       example:
         orders:
         - contact_name: contact_name
-          delivery_address: delivery_address
+          delivery_address:
+            country: country
+            address: address
+            city: city
+            postcode: postcode
           notes: notes
           customer_account_no: customer_account_no
           contact_info: contact_info
@@ -2328,7 +2448,11 @@ components:
             spec: spec
           supplier_notes: supplier_notes
         - contact_name: contact_name
-          delivery_address: delivery_address
+          delivery_address:
+            country: country
+            address: address
+            city: city
+            postcode: postcode
           notes: notes
           customer_account_no: customer_account_no
           contact_info: contact_info
@@ -2360,7 +2484,7 @@ components:
         orders:
           description: list of not integrated orders
           items:
-            $ref: '#/components/schemas/integration.Order'
+            $ref: '#/components/schemas/v3.Order'
           type: array
       type: object
     v3.ReplaceCatalogInput:

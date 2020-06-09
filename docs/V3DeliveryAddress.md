@@ -1,10 +1,13 @@
-# V3OrderListOutput
+# V3DeliveryAddress
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Orders** | [**[]V3Order**](v3.Order.md) | list of not integrated orders | [optional] 
+**Address** | **string** |  | [optional] 
+**City** | **string** |  | [optional] 
+**Country** | **string** |  | [optional] 
+**Postcode** | **string** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

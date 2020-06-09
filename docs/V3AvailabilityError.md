@@ -1,10 +1,11 @@
-# V3OrderListOutput
+# V3AvailabilityError
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Orders** | [**[]V3Order**](v3.Order.md) | list of not integrated orders | [optional] 
+**Error** | **string** |  | [optional] 
+**Item** | [**V3StockItemState**](v3.StockItemState.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
