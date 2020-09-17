@@ -1,5 +1,5 @@
 /*
- * Rekki.com Supply API
+ * Rekki.com Supplier API
  *
  * The base URL for all API endpoints is https://api.rekki.com  Api key value contains of word Bearer together with api key that you can get from integrations@rekki.com 
  *
@@ -27,15 +27,42 @@ var (
 // CatalogApiService CatalogApi service
 type CatalogApiService service
 
+type ApiDeleteCatalogItemRequest struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	id string
+}
+
+func (r ApiDeleteCatalogItemRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiDeleteCatalogItemRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+
+func (r ApiDeleteCatalogItemRequest) Execute() (MainSuccessConfirmation, *_nethttp.Response, error) {
+	return r.ApiService.DeleteCatalogItemExecute(r)
+}
+
 /*
-DeleteCatalogItem Delete an item from catalog
-Delete an item from your catalog by its unique ID.
+ * DeleteCatalogItem Delete an item from catalog
+ * Delete an item from your catalog by its unique ID.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
  * @param id ID of the item to retrieve. Item IDs are discoverable when listing items.
-@return MainSuccessConfirmation
-*/
-func (a *CatalogApiService) DeleteCatalogItem(ctx _context.Context, xREKKIAuthorizationType string, id string) (MainSuccessConfirmation, *_nethttp.Response, error) {
+ * @return ApiDeleteCatalogItemRequest
+ */
+func (a *CatalogApiService) DeleteCatalogItem(ctx _context.Context, id string) ApiDeleteCatalogItemRequest {
+	return ApiDeleteCatalogItemRequest{
+		ApiService: a,
+		ctx: ctx,
+		id: id,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainSuccessConfirmation
+ */
+func (a *CatalogApiService) DeleteCatalogItemExecute(r ApiDeleteCatalogItemRequest) (MainSuccessConfirmation, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodDelete
 		localVarPostBody     interface{}
@@ -45,13 +72,20 @@ func (a *CatalogApiService) DeleteCatalogItem(ctx _context.Context, xREKKIAuthor
 		localVarReturnValue  MainSuccessConfirmation
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/catalog/items/{id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")) , -1)
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.DeleteCatalogItem")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/catalog/items/{id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.PathEscape(parameterToString(r.id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -70,25 +104,27 @@ func (a *CatalogApiService) DeleteCatalogItem(ctx _context.Context, xREKKIAuthor
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
-	if ctx != nil {
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -138,15 +174,44 @@ func (a *CatalogApiService) DeleteCatalogItem(ctx _context.Context, xREKKIAuthor
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiDeleteCatalogItemsV3Request struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	input *V3DeleteCatalogItemsInput
+}
+
+func (r ApiDeleteCatalogItemsV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiDeleteCatalogItemsV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiDeleteCatalogItemsV3Request) Input(input V3DeleteCatalogItemsInput) ApiDeleteCatalogItemsV3Request {
+	r.input = &input
+	return r
+}
+
+func (r ApiDeleteCatalogItemsV3Request) Execute() (V3SuccessConfirmation, *_nethttp.Response, error) {
+	return r.ApiService.DeleteCatalogItemsV3Execute(r)
+}
+
 /*
-DeleteCatalogItemsV3 Delete items from catalog
-Delete items from the catalog by its unique IDs.
+ * DeleteCatalogItemsV3 Delete items from catalog
+ * Delete items from the catalog by its unique IDs.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return V3SuccessConfirmation
-*/
-func (a *CatalogApiService) DeleteCatalogItemsV3(ctx _context.Context, xREKKIAuthorizationType string, input V3DeleteCatalogItemsInput) (V3SuccessConfirmation, *_nethttp.Response, error) {
+ * @return ApiDeleteCatalogItemsV3Request
+ */
+func (a *CatalogApiService) DeleteCatalogItemsV3(ctx _context.Context) ApiDeleteCatalogItemsV3Request {
+	return ApiDeleteCatalogItemsV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3SuccessConfirmation
+ */
+func (a *CatalogApiService) DeleteCatalogItemsV3Execute(r ApiDeleteCatalogItemsV3Request) (V3SuccessConfirmation, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -156,11 +221,22 @@ func (a *CatalogApiService) DeleteCatalogItemsV3(ctx _context.Context, xREKKIAut
 		localVarReturnValue  V3SuccessConfirmation
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/catalog/items/delete"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.DeleteCatalogItemsV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/catalog/items/delete"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -179,27 +255,29 @@ func (a *CatalogApiService) DeleteCatalogItemsV3(ctx _context.Context, xREKKIAut
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -249,30 +327,64 @@ func (a *CatalogApiService) DeleteCatalogItemsV3(ctx _context.Context, xREKKIAut
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiGetCatalogItemRequest struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	id string
+}
+
+func (r ApiGetCatalogItemRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiGetCatalogItemRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+
+func (r ApiGetCatalogItemRequest) Execute() (MainAPISupplierCatalogItem, *_nethttp.Response, error) {
+	return r.ApiService.GetCatalogItemExecute(r)
+}
+
 /*
-GetCatalogItem Lists all orders placed for the supplier that were placed through REKKI.
+ * GetCatalogItem Lists all orders placed for the supplier that were placed through REKKI.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
  * @param id ID of the item to retrieve. Item IDs are discoverable when listing items.
-@return MainApiSupplierCatalogItem
-*/
-func (a *CatalogApiService) GetCatalogItem(ctx _context.Context, xREKKIAuthorizationType string, id string) (MainApiSupplierCatalogItem, *_nethttp.Response, error) {
+ * @return ApiGetCatalogItemRequest
+ */
+func (a *CatalogApiService) GetCatalogItem(ctx _context.Context, id string) ApiGetCatalogItemRequest {
+	return ApiGetCatalogItemRequest{
+		ApiService: a,
+		ctx: ctx,
+		id: id,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainAPISupplierCatalogItem
+ */
+func (a *CatalogApiService) GetCatalogItemExecute(r ApiGetCatalogItemRequest) (MainAPISupplierCatalogItem, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  MainApiSupplierCatalogItem
+		localVarReturnValue  MainAPISupplierCatalogItem
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/catalog/items/{id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")) , -1)
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.GetCatalogItem")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/catalog/items/{id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.PathEscape(parameterToString(r.id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -291,25 +403,27 @@ func (a *CatalogApiService) GetCatalogItem(ctx _context.Context, xREKKIAuthoriza
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
-	if ctx != nil {
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -369,30 +483,64 @@ func (a *CatalogApiService) GetCatalogItem(ctx _context.Context, xREKKIAuthoriza
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiGetCatalogItemV3Request struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	id string
+}
+
+func (r ApiGetCatalogItemV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiGetCatalogItemV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+
+func (r ApiGetCatalogItemV3Request) Execute() (V3APISupplierCatalogItem, *_nethttp.Response, error) {
+	return r.ApiService.GetCatalogItemV3Execute(r)
+}
+
 /*
-GetCatalogItemV3 Fetch a specific catalog item by its Id.
+ * GetCatalogItemV3 Fetch a specific catalog item by its Id.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
  * @param id ID of the item to retrieve. Item IDs are discoverable when listing items.
-@return V3ApiSupplierCatalogItem
-*/
-func (a *CatalogApiService) GetCatalogItemV3(ctx _context.Context, xREKKIAuthorizationType string, id string) (V3ApiSupplierCatalogItem, *_nethttp.Response, error) {
+ * @return ApiGetCatalogItemV3Request
+ */
+func (a *CatalogApiService) GetCatalogItemV3(ctx _context.Context, id string) ApiGetCatalogItemV3Request {
+	return ApiGetCatalogItemV3Request{
+		ApiService: a,
+		ctx: ctx,
+		id: id,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3APISupplierCatalogItem
+ */
+func (a *CatalogApiService) GetCatalogItemV3Execute(r ApiGetCatalogItemV3Request) (V3APISupplierCatalogItem, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  V3ApiSupplierCatalogItem
+		localVarReturnValue  V3APISupplierCatalogItem
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/catalog/items/{id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.QueryEscape(parameterToString(id, "")) , -1)
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.GetCatalogItemV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/catalog/items/{id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"id"+"}", _neturl.PathEscape(parameterToString(r.id, "")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -411,25 +559,27 @@ func (a *CatalogApiService) GetCatalogItemV3(ctx _context.Context, xREKKIAuthori
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
-	if ctx != nil {
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -489,14 +639,41 @@ func (a *CatalogApiService) GetCatalogItemV3(ctx _context.Context, xREKKIAuthori
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiGetCatalogItemsRequest struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+}
+
+func (r ApiGetCatalogItemsRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiGetCatalogItemsRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+
+func (r ApiGetCatalogItemsRequest) Execute() (MainCatalogItems, *_nethttp.Response, error) {
+	return r.ApiService.GetCatalogItemsExecute(r)
+}
+
 /*
-GetCatalogItems Get catalog items for authenticated supplier
-Lists all your catalog items. Sorted by creation date, with the oldest appearing first. No input parameters. Options for pagination and sorting direction may be introduced later. Response is a JSON object with a data property that contains catalog items of the authenticated supplier.
+ * GetCatalogItems Get catalog items for authenticated supplier
+ * Lists all your catalog items. Sorted by creation date, with the oldest appearing first.
+No input parameters. Options for pagination and sorting direction may be introduced later.
+Response is a JSON object with a data property that contains catalog items of the authenticated supplier.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
-@return MainCatalogItems
-*/
-func (a *CatalogApiService) GetCatalogItems(ctx _context.Context, xREKKIAuthorizationType string) (MainCatalogItems, *_nethttp.Response, error) {
+ * @return ApiGetCatalogItemsRequest
+ */
+func (a *CatalogApiService) GetCatalogItems(ctx _context.Context) ApiGetCatalogItemsRequest {
+	return ApiGetCatalogItemsRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainCatalogItems
+ */
+func (a *CatalogApiService) GetCatalogItemsExecute(r ApiGetCatalogItemsRequest) (MainCatalogItems, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -506,11 +683,19 @@ func (a *CatalogApiService) GetCatalogItems(ctx _context.Context, xREKKIAuthoriz
 		localVarReturnValue  MainCatalogItems
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/catalog/items"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.GetCatalogItems")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/catalog/items"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -529,25 +714,27 @@ func (a *CatalogApiService) GetCatalogItems(ctx _context.Context, xREKKIAuthoriz
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
-	if ctx != nil {
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -597,14 +784,41 @@ func (a *CatalogApiService) GetCatalogItems(ctx _context.Context, xREKKIAuthoriz
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiGetCatalogItemsV3Request struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+}
+
+func (r ApiGetCatalogItemsV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiGetCatalogItemsV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+
+func (r ApiGetCatalogItemsV3Request) Execute() (V3CatalogItems, *_nethttp.Response, error) {
+	return r.ApiService.GetCatalogItemsV3Execute(r)
+}
+
 /*
-GetCatalogItemsV3 Get catalog items for authenticated supplier
-Lists all your catalog items. Sorted by creation date, with the oldest appearing first. No input parameters. Options for pagination and sorting direction may be introduced later. Response is a JSON object with a data property that contains catalog items of the authenticated supplier.
+ * GetCatalogItemsV3 Get catalog items for authenticated supplier
+ * Lists all your catalog items. Sorted by creation date, with the oldest appearing first.
+No input parameters. Options for pagination and sorting direction may be introduced later.
+Response is a JSON object with a data property that contains catalog items of the authenticated supplier.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
-@return V3CatalogItems
-*/
-func (a *CatalogApiService) GetCatalogItemsV3(ctx _context.Context, xREKKIAuthorizationType string) (V3CatalogItems, *_nethttp.Response, error) {
+ * @return ApiGetCatalogItemsV3Request
+ */
+func (a *CatalogApiService) GetCatalogItemsV3(ctx _context.Context) ApiGetCatalogItemsV3Request {
+	return ApiGetCatalogItemsV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3CatalogItems
+ */
+func (a *CatalogApiService) GetCatalogItemsV3Execute(r ApiGetCatalogItemsV3Request) (V3CatalogItems, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodGet
 		localVarPostBody     interface{}
@@ -614,11 +828,19 @@ func (a *CatalogApiService) GetCatalogItemsV3(ctx _context.Context, xREKKIAuthor
 		localVarReturnValue  V3CatalogItems
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/catalog/items"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.GetCatalogItemsV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/catalog/items"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -637,25 +859,27 @@ func (a *CatalogApiService) GetCatalogItemsV3(ctx _context.Context, xREKKIAuthor
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
-	if ctx != nil {
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -705,15 +929,87 @@ func (a *CatalogApiService) GetCatalogItemsV3(ctx _context.Context, xREKKIAuthor
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiReplaceCatalogRequest struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	input *MainReplaceCatalogInput
+}
+
+func (r ApiReplaceCatalogRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiReplaceCatalogRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiReplaceCatalogRequest) Input(input MainReplaceCatalogInput) ApiReplaceCatalogRequest {
+	r.input = &input
+	return r
+}
+
+func (r ApiReplaceCatalogRequest) Execute() (MainSuccessConfirmation, *_nethttp.Response, error) {
+	return r.ApiService.ReplaceCatalogExecute(r)
+}
+
 /*
-ReplaceCatalog Drop all existing items from the catalog and upload new ones
-### Parameters  - **&#x60;id&#x60;** REKKI&#39;s ID to uniquely identify the catalog item (for REKKI internal reference). If &#x60;id&#x60; is specified the item will be update, if not it will attempt to insert it. - **&#x60;product_code&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; Product code for the item that maps to the supplier&#39;s catalog. Suppliers can modify the product code for future orders at https://supplier.rekki.com - **&#x60;name&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; Item name as would be defined on the customer&#39;s product list. - **&#x60;currency&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is GBP&lt;/span&gt; Currency code for the price. In [ISO 4217][] three-letter format. - **&#x60;units_prices&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; List of units and their prices that the item can be ordered in. - **&#x60;units_prices.unit&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; A unit that the item can be ordered in. - **&#x60;units_prices.price_cents&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is 0&lt;/span&gt; The order price in cents for the item per unit. For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50. - **&#x60;units_prices.stock_count&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; The number of items in stock for the related unit. - **&#x60;availability&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is \&quot;in_stock\&quot;&lt;/span&gt; Availability status of the item. Can be \&quot;in_stock\&quot;, \&quot;out_of_stock\&quot;, or \&quot;discontinued\&quot;. - **&#x60;description&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Short description of the item. - **&#x60;allergens&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of allergens for the item, if any. - **&#x60;allergens.type&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when allergens is given&lt;/span&gt; Type of allergy. For example \&quot;contains peanuts\&quot; or \&quot;may contain peanuts\&quot;. - **&#x60;allergens.symptoms&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of symptoms for the allergy. - **&#x60;order_cutoff_times&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Cutt-off times are the minimum amount of time before delivery when the item can still be ordered. - **&#x60;order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day. - **&#x60;replacement_products&#x60;**   &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of product codes for alternative items when this item is not available. - **&#x60;seasonality&#x60;**   &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of date ranges when the item is in-season. - **&#x60;seasonality.start_date&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when seasonality is given&lt;/span&gt;   The start date when the item is in season. In [ISO 8601][] calendar date format &#x60;YYYY-MM-DD&#x60;.   - **&#x60;seasonality.end_date&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when seasonality is given&lt;/span&gt;     The end date when the item is in season. In [ISO 8601][] calendar date format &#x60;YYYY-MM-DD&#x60;. 
+ * ReplaceCatalog Drop all existing items from the catalog and upload new ones
+ * ### Parameters
+
+- **`id`**
+REKKI's ID to uniquely identify the catalog item (for REKKI internal reference).
+If `id` is specified the item will be update, if not it will attempt to insert it.
+- **`product_code`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+Product code for the item that maps to the supplier's catalog.
+Suppliers can modify the product code for future orders at https://supplier.rekki.com
+- **`name`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+Item name as would be defined on the customer's product list.
+- **`currency`**  <span style="font-size: 12px; font-weight: 500;">optional, default is GBP</span>
+Currency code for the price. In [ISO 4217][] three-letter format.
+- **`units_prices`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+List of units and their prices that the item can be ordered in.
+- **`units_prices.unit`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+A unit that the item can be ordered in.
+- **`units_prices.price_cents`**  <span style="font-size: 12px; font-weight: 500;">optional, default is 0</span>
+The order price in cents for the item per unit.
+For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50.
+- **`units_prices.stock_count`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+The number of items in stock for the related unit.
+- **`availability`**  <span style="font-size: 12px; font-weight: 500;">optional, default is "in_stock"</span>
+Availability status of the item. Can be "in_stock", "out_of_stock", or "discontinued".
+- **`description`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Short description of the item.
+- **`allergens`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of allergens for the item, if any.
+- **`allergens.type`**  <span style="font-size: 12px; font-weight: 500;">required when allergens is given</span>
+Type of allergy. For example "contains peanuts" or "may contain peanuts".
+- **`allergens.symptoms`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of symptoms for the allergy.
+- **`order_cutoff_times`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Cutt-off times are the minimum amount of time before delivery when the item can still be ordered.
+- **`order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day.
+- **`replacement_products`**   <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of product codes for alternative items when this item is not available.
+- **`seasonality`**   <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of date ranges when the item is in-season.
+- **`seasonality.start_date`**  <span style="font-size: 12px; font-weight: 500;">required when seasonality is given</span>
+  The start date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.
+  - **`seasonality.end_date`**  <span style="font-size: 12px; font-weight: 500;">required when seasonality is given</span>
+    The end date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return MainSuccessConfirmation
-*/
-func (a *CatalogApiService) ReplaceCatalog(ctx _context.Context, xREKKIAuthorizationType string, input MainReplaceCatalogInput) (MainSuccessConfirmation, *_nethttp.Response, error) {
+ * @return ApiReplaceCatalogRequest
+ */
+func (a *CatalogApiService) ReplaceCatalog(ctx _context.Context) ApiReplaceCatalogRequest {
+	return ApiReplaceCatalogRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainSuccessConfirmation
+ */
+func (a *CatalogApiService) ReplaceCatalogExecute(r ApiReplaceCatalogRequest) (MainSuccessConfirmation, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -723,11 +1019,22 @@ func (a *CatalogApiService) ReplaceCatalog(ctx _context.Context, xREKKIAuthoriza
 		localVarReturnValue  MainSuccessConfirmation
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/catalog/replace"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.ReplaceCatalog")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/catalog/replace"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -746,27 +1053,29 @@ func (a *CatalogApiService) ReplaceCatalog(ctx _context.Context, xREKKIAuthoriza
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -826,15 +1135,87 @@ func (a *CatalogApiService) ReplaceCatalog(ctx _context.Context, xREKKIAuthoriza
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiReplaceCatalogV3Request struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	input *V3ReplaceCatalogInput
+}
+
+func (r ApiReplaceCatalogV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiReplaceCatalogV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiReplaceCatalogV3Request) Input(input V3ReplaceCatalogInput) ApiReplaceCatalogV3Request {
+	r.input = &input
+	return r
+}
+
+func (r ApiReplaceCatalogV3Request) Execute() (V3SuccessConfirmation, *_nethttp.Response, error) {
+	return r.ApiService.ReplaceCatalogV3Execute(r)
+}
+
 /*
-ReplaceCatalogV3 Drop all existing items from the catalog and upload new ones
-### Parameters  - **&#x60;id&#x60;** REKKI&#39;s ID to uniquely identify the catalog item (for REKKI internal reference). If &#x60;id&#x60; is specified the item will be update, if not it will attempt to insert it. - **&#x60;product_code&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; Product code for the item that maps to the supplier&#39;s catalog. Suppliers can modify the product code for future orders at https://supplier.rekki.com - **&#x60;name&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; Item name as would be defined on the customer&#39;s product list. - **&#x60;currency&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is GBP&lt;/span&gt; Currency code for the price. In [ISO 4217][] three-letter format. - **&#x60;units_prices&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; List of units and their prices that the item can be ordered in. - **&#x60;units_prices.unit&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; A unit that the item can be ordered in. - **&#x60;units_prices.price_cents&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is 0&lt;/span&gt; The order price in cents for the item per unit. For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50. - **&#x60;units_prices.stock_count&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; The number of items in stock for the related unit. - **&#x60;availability&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is \&quot;in_stock\&quot;&lt;/span&gt; Availability status of the item. Can be \&quot;in_stock\&quot;, \&quot;out_of_stock\&quot;, or \&quot;discontinued\&quot;. - **&#x60;description&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Short description of the item. - **&#x60;allergens&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of allergens for the item, if any. - **&#x60;allergens.type&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when allergens is given&lt;/span&gt; Type of allergy. For example \&quot;contains peanuts\&quot; or \&quot;may contain peanuts\&quot;. - **&#x60;allergens.symptoms&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of symptoms for the allergy. - **&#x60;order_cutoff_times&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Cutt-off times are the minimum amount of time before delivery when the item can still be ordered. - **&#x60;order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day. - **&#x60;replacement_products&#x60;**   &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of product codes for alternative items when this item is not available. - **&#x60;seasonality&#x60;**   &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of date ranges when the item is in-season. - **&#x60;seasonality.start_date&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when seasonality is given&lt;/span&gt;   The start date when the item is in season. In [ISO 8601][] calendar date format &#x60;YYYY-MM-DD&#x60;.   - **&#x60;seasonality.end_date&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when seasonality is given&lt;/span&gt;     The end date when the item is in season. In [ISO 8601][] calendar date format &#x60;YYYY-MM-DD&#x60;. 
+ * ReplaceCatalogV3 Drop all existing items from the catalog and upload new ones
+ * ### Parameters
+
+- **`id`**
+REKKI's ID to uniquely identify the catalog item (for REKKI internal reference).
+If `id` is specified the item will be update, if not it will attempt to insert it.
+- **`product_code`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+Product code for the item that maps to the supplier's catalog.
+Suppliers can modify the product code for future orders at https://supplier.rekki.com
+- **`name`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+Item name as would be defined on the customer's product list.
+- **`currency`**  <span style="font-size: 12px; font-weight: 500;">optional, default is GBP</span>
+Currency code for the price. In [ISO 4217][] three-letter format.
+- **`units_prices`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+List of units and their prices that the item can be ordered in.
+- **`units_prices.unit`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+A unit that the item can be ordered in.
+- **`units_prices.price_cents`**  <span style="font-size: 12px; font-weight: 500;">optional, default is 0</span>
+The order price in cents for the item per unit.
+For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50.
+- **`units_prices.stock_count`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+The number of items in stock for the related unit.
+- **`availability`**  <span style="font-size: 12px; font-weight: 500;">optional, default is "in_stock"</span>
+Availability status of the item. Can be "in_stock", "out_of_stock", or "discontinued".
+- **`description`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Short description of the item.
+- **`allergens`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of allergens for the item, if any.
+- **`allergens.type`**  <span style="font-size: 12px; font-weight: 500;">required when allergens is given</span>
+Type of allergy. For example "contains peanuts" or "may contain peanuts".
+- **`allergens.symptoms`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of symptoms for the allergy.
+- **`order_cutoff_times`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Cutt-off times are the minimum amount of time before delivery when the item can still be ordered.
+- **`order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day.
+- **`replacement_products`**   <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of product codes for alternative items when this item is not available.
+- **`seasonality`**   <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of date ranges when the item is in-season.
+- **`seasonality.start_date`**  <span style="font-size: 12px; font-weight: 500;">required when seasonality is given</span>
+  The start date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.
+  - **`seasonality.end_date`**  <span style="font-size: 12px; font-weight: 500;">required when seasonality is given</span>
+    The end date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return V3SuccessConfirmation
-*/
-func (a *CatalogApiService) ReplaceCatalogV3(ctx _context.Context, xREKKIAuthorizationType string, input V3ReplaceCatalogInput) (V3SuccessConfirmation, *_nethttp.Response, error) {
+ * @return ApiReplaceCatalogV3Request
+ */
+func (a *CatalogApiService) ReplaceCatalogV3(ctx _context.Context) ApiReplaceCatalogV3Request {
+	return ApiReplaceCatalogV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3SuccessConfirmation
+ */
+func (a *CatalogApiService) ReplaceCatalogV3Execute(r ApiReplaceCatalogV3Request) (V3SuccessConfirmation, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -844,11 +1225,22 @@ func (a *CatalogApiService) ReplaceCatalogV3(ctx _context.Context, xREKKIAuthori
 		localVarReturnValue  V3SuccessConfirmation
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/catalog/replace"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.ReplaceCatalogV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/catalog/replace"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -867,27 +1259,29 @@ func (a *CatalogApiService) ReplaceCatalogV3(ctx _context.Context, xREKKIAuthori
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -947,29 +1341,112 @@ func (a *CatalogApiService) ReplaceCatalogV3(ctx _context.Context, xREKKIAuthori
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiUpdateCatalogItemRequest struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	input *MainAPISupplierCatalogItem
+}
+
+func (r ApiUpdateCatalogItemRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiUpdateCatalogItemRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiUpdateCatalogItemRequest) Input(input MainAPISupplierCatalogItem) ApiUpdateCatalogItemRequest {
+	r.input = &input
+	return r
+}
+
+func (r ApiUpdateCatalogItemRequest) Execute() (MainAPISupplierCatalogItem, *_nethttp.Response, error) {
+	return r.ApiService.UpdateCatalogItemExecute(r)
+}
+
 /*
-UpdateCatalogItem Creates or Updates an item on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
-### Parameters  - **&#x60;id&#x60;** REKKI&#39;s ID to uniquely identify the catalog item (for REKKI internal reference). If &#x60;id&#x60; is specified the item will be update, if not it will attempt to insert it. - **&#x60;product_code&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; Product code for the item that maps to the supplier&#39;s catalog. Suppliers can modify the product code for future orders at https://supplier.rekki.com - **&#x60;name&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; Item name as would be defined on the customer&#39;s product list. - **&#x60;currency&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is GBP&lt;/span&gt; Currency code for the price. In [ISO 4217][] three-letter format. - **&#x60;units_prices&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; List of units and their prices that the item can be ordered in. - **&#x60;units_prices.unit&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; A unit that the item can be ordered in. - **&#x60;units_prices.price_cents&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is 0&lt;/span&gt; The order price in cents for the item per unit. For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50. - **&#x60;units_prices.stock_count&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; The number of items in stock for the related unit. - **&#x60;availability&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is \&quot;in_stock\&quot;&lt;/span&gt; Availability status of the item. Can be \&quot;in_stock\&quot;, \&quot;out_of_stock\&quot;, or \&quot;discontinued\&quot;. - **&#x60;description&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Short description of the item. - **&#x60;allergens&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of allergens for the item, if any. - **&#x60;allergens.type&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when allergens is given&lt;/span&gt; Type of allergy. For example \&quot;contains peanuts\&quot; or \&quot;may contain peanuts\&quot;. - **&#x60;allergens.symptoms&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of symptoms for the allergy. - **&#x60;order_cutoff_times&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Cutt-off times are the minimum amount of time before delivery when the item can still be ordered. - **&#x60;order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day. - **&#x60;replacement_products&#x60;**   &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of product codes for alternative items when this item is not available. - **&#x60;seasonality&#x60;**   &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of date ranges when the item is in-season. - **&#x60;seasonality.start_date&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when seasonality is given&lt;/span&gt;   The start date when the item is in season. In [ISO 8601][] calendar date format &#x60;YYYY-MM-DD&#x60;.   - **&#x60;seasonality.end_date&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when seasonality is given&lt;/span&gt;     The end date when the item is in season. In [ISO 8601][] calendar date format &#x60;YYYY-MM-DD&#x60;. 
+ * UpdateCatalogItem Creates or Updates an item on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
+ * ### Parameters
+
+- **`id`**
+REKKI's ID to uniquely identify the catalog item (for REKKI internal reference).
+If `id` is specified the item will be update, if not it will attempt to insert it.
+- **`product_code`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+Product code for the item that maps to the supplier's catalog.
+Suppliers can modify the product code for future orders at https://supplier.rekki.com
+- **`name`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+Item name as would be defined on the customer's product list.
+- **`currency`**  <span style="font-size: 12px; font-weight: 500;">optional, default is GBP</span>
+Currency code for the price. In [ISO 4217][] three-letter format.
+- **`units_prices`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+List of units and their prices that the item can be ordered in.
+- **`units_prices.unit`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+A unit that the item can be ordered in.
+- **`units_prices.price_cents`**  <span style="font-size: 12px; font-weight: 500;">optional, default is 0</span>
+The order price in cents for the item per unit.
+For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50.
+- **`units_prices.stock_count`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+The number of items in stock for the related unit.
+- **`availability`**  <span style="font-size: 12px; font-weight: 500;">optional, default is "in_stock"</span>
+Availability status of the item. Can be "in_stock", "out_of_stock", or "discontinued".
+- **`description`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Short description of the item.
+- **`allergens`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of allergens for the item, if any.
+- **`allergens.type`**  <span style="font-size: 12px; font-weight: 500;">required when allergens is given</span>
+Type of allergy. For example "contains peanuts" or "may contain peanuts".
+- **`allergens.symptoms`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of symptoms for the allergy.
+- **`order_cutoff_times`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Cutt-off times are the minimum amount of time before delivery when the item can still be ordered.
+- **`order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day.
+- **`replacement_products`**   <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of product codes for alternative items when this item is not available.
+- **`seasonality`**   <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of date ranges when the item is in-season.
+- **`seasonality.start_date`**  <span style="font-size: 12px; font-weight: 500;">required when seasonality is given</span>
+  The start date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.
+  - **`seasonality.end_date`**  <span style="font-size: 12px; font-weight: 500;">required when seasonality is given</span>
+    The end date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return MainApiSupplierCatalogItem
-*/
-func (a *CatalogApiService) UpdateCatalogItem(ctx _context.Context, xREKKIAuthorizationType string, input MainApiSupplierCatalogItem) (MainApiSupplierCatalogItem, *_nethttp.Response, error) {
+ * @return ApiUpdateCatalogItemRequest
+ */
+func (a *CatalogApiService) UpdateCatalogItem(ctx _context.Context) ApiUpdateCatalogItemRequest {
+	return ApiUpdateCatalogItemRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainAPISupplierCatalogItem
+ */
+func (a *CatalogApiService) UpdateCatalogItemExecute(r ApiUpdateCatalogItemRequest) (MainAPISupplierCatalogItem, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
 		localVarFormFileName string
 		localVarFileName     string
 		localVarFileBytes    []byte
-		localVarReturnValue  MainApiSupplierCatalogItem
+		localVarReturnValue  MainAPISupplierCatalogItem
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/catalog/items"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.UpdateCatalogItem")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/catalog/items"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -988,27 +1465,29 @@ func (a *CatalogApiService) UpdateCatalogItem(ctx _context.Context, xREKKIAuthor
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -1068,14 +1547,43 @@ func (a *CatalogApiService) UpdateCatalogItem(ctx _context.Context, xREKKIAuthor
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiUpdateCatalogItemAvailabilityRequest struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	input *MainSetStockStatusInput
+}
+
+func (r ApiUpdateCatalogItemAvailabilityRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiUpdateCatalogItemAvailabilityRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiUpdateCatalogItemAvailabilityRequest) Input(input MainSetStockStatusInput) ApiUpdateCatalogItemAvailabilityRequest {
+	r.input = &input
+	return r
+}
+
+func (r ApiUpdateCatalogItemAvailabilityRequest) Execute() (MainUpdateSuccess, *_nethttp.Response, error) {
+	return r.ApiService.UpdateCatalogItemAvailabilityExecute(r)
+}
+
 /*
-UpdateCatalogItemAvailability Update availability status for one of the items in the catalog
+ * UpdateCatalogItemAvailability Update availability status for one of the items in the catalog
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return MainUpdateSuccess
-*/
-func (a *CatalogApiService) UpdateCatalogItemAvailability(ctx _context.Context, xREKKIAuthorizationType string, input MainSetStockStatusInput) (MainUpdateSuccess, *_nethttp.Response, error) {
+ * @return ApiUpdateCatalogItemAvailabilityRequest
+ */
+func (a *CatalogApiService) UpdateCatalogItemAvailability(ctx _context.Context) ApiUpdateCatalogItemAvailabilityRequest {
+	return ApiUpdateCatalogItemAvailabilityRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainUpdateSuccess
+ */
+func (a *CatalogApiService) UpdateCatalogItemAvailabilityExecute(r ApiUpdateCatalogItemAvailabilityRequest) (MainUpdateSuccess, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1085,11 +1593,22 @@ func (a *CatalogApiService) UpdateCatalogItemAvailability(ctx _context.Context, 
 		localVarReturnValue  MainUpdateSuccess
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v2/catalog/items/availability"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.UpdateCatalogItemAvailability")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v2/catalog/items/availability"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -1108,27 +1627,29 @@ func (a *CatalogApiService) UpdateCatalogItemAvailability(ctx _context.Context, 
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -1188,14 +1709,43 @@ func (a *CatalogApiService) UpdateCatalogItemAvailability(ctx _context.Context, 
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiUpdateCatalogItemAvailabilityV3Request struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	input *V3SetStockStatusInput
+}
+
+func (r ApiUpdateCatalogItemAvailabilityV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiUpdateCatalogItemAvailabilityV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiUpdateCatalogItemAvailabilityV3Request) Input(input V3SetStockStatusInput) ApiUpdateCatalogItemAvailabilityV3Request {
+	r.input = &input
+	return r
+}
+
+func (r ApiUpdateCatalogItemAvailabilityV3Request) Execute() (V3UpdateSuccess, *_nethttp.Response, error) {
+	return r.ApiService.UpdateCatalogItemAvailabilityV3Execute(r)
+}
+
 /*
-UpdateCatalogItemAvailabilityV3 Update availability status for one of the items in the catalog
+ * UpdateCatalogItemAvailabilityV3 Update availability status for one of the items in the catalog
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return V3UpdateSuccess
-*/
-func (a *CatalogApiService) UpdateCatalogItemAvailabilityV3(ctx _context.Context, xREKKIAuthorizationType string, input V3SetStockStatusInput) (V3UpdateSuccess, *_nethttp.Response, error) {
+ * @return ApiUpdateCatalogItemAvailabilityV3Request
+ */
+func (a *CatalogApiService) UpdateCatalogItemAvailabilityV3(ctx _context.Context) ApiUpdateCatalogItemAvailabilityV3Request {
+	return ApiUpdateCatalogItemAvailabilityV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3UpdateSuccess
+ */
+func (a *CatalogApiService) UpdateCatalogItemAvailabilityV3Execute(r ApiUpdateCatalogItemAvailabilityV3Request) (V3UpdateSuccess, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1205,11 +1755,22 @@ func (a *CatalogApiService) UpdateCatalogItemAvailabilityV3(ctx _context.Context
 		localVarReturnValue  V3UpdateSuccess
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/catalog/items/availability"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.UpdateCatalogItemAvailabilityV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/catalog/items/availability"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -1228,27 +1789,29 @@ func (a *CatalogApiService) UpdateCatalogItemAvailabilityV3(ctx _context.Context
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -1308,15 +1871,87 @@ func (a *CatalogApiService) UpdateCatalogItemAvailabilityV3(ctx _context.Context
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiUpdateCatalogItemsV3Request struct {
+	ctx _context.Context
+	ApiService *CatalogApiService
+	xREKKIAuthorizationType *string
+	input *V3UpdateCatalogInput
+}
+
+func (r ApiUpdateCatalogItemsV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiUpdateCatalogItemsV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiUpdateCatalogItemsV3Request) Input(input V3UpdateCatalogInput) ApiUpdateCatalogItemsV3Request {
+	r.input = &input
+	return r
+}
+
+func (r ApiUpdateCatalogItemsV3Request) Execute() (V3CatalogItems, *_nethttp.Response, error) {
+	return r.ApiService.UpdateCatalogItemsV3Execute(r)
+}
+
 /*
-UpdateCatalogItemsV3 Creates or Updates multiple items on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
-### Parameters  - **&#x60;id&#x60;** REKKI&#39;s ID to uniquely identify the catalog item (for REKKI internal reference). If &#x60;id&#x60; is specified the item will be update, if not it will attempt to insert it. - **&#x60;product_code&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; Product code for the item that maps to the supplier&#39;s catalog. Suppliers can modify the product code for future orders at https://supplier.rekki.com - **&#x60;name&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; Item name as would be defined on the customer&#39;s product list. - **&#x60;currency&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is GBP&lt;/span&gt; Currency code for the price. In [ISO 4217][] three-letter format. - **&#x60;units_prices&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; List of units and their prices that the item can be ordered in. - **&#x60;units_prices.unit&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required&lt;/span&gt; A unit that the item can be ordered in. - **&#x60;units_prices.price_cents&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is 0&lt;/span&gt; The order price in cents for the item per unit. For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50. - **&#x60;units_prices.stock_count&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; The number of items in stock for the related unit. - **&#x60;availability&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional, default is \&quot;in_stock\&quot;&lt;/span&gt; Availability status of the item. Can be \&quot;in_stock\&quot;, \&quot;out_of_stock\&quot;, or \&quot;discontinued\&quot;. - **&#x60;description&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Short description of the item. - **&#x60;allergens&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of allergens for the item, if any. - **&#x60;allergens.type&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when allergens is given&lt;/span&gt; Type of allergy. For example \&quot;contains peanuts\&quot; or \&quot;may contain peanuts\&quot;. - **&#x60;allergens.symptoms&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of symptoms for the allergy. - **&#x60;order_cutoff_times&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Cutt-off times are the minimum amount of time before delivery when the item can still be ordered. - **&#x60;order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day. - **&#x60;replacement_products&#x60;**   &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of product codes for alternative items when this item is not available. - **&#x60;seasonality&#x60;**   &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;optional&lt;/span&gt; List of date ranges when the item is in-season. - **&#x60;seasonality.start_date&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when seasonality is given&lt;/span&gt;   The start date when the item is in season. In [ISO 8601][] calendar date format &#x60;YYYY-MM-DD&#x60;.   - **&#x60;seasonality.end_date&#x60;**  &lt;span style&#x3D;\&quot;font-size: 12px; font-weight: 500;\&quot;&gt;required when seasonality is given&lt;/span&gt;     The end date when the item is in season. In [ISO 8601][] calendar date format &#x60;YYYY-MM-DD&#x60;. 
+ * UpdateCatalogItemsV3 Creates or Updates multiple items on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
+ * ### Parameters
+
+- **`id`**
+REKKI's ID to uniquely identify the catalog item (for REKKI internal reference).
+If `id` is specified the item will be update, if not it will attempt to insert it.
+- **`product_code`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+Product code for the item that maps to the supplier's catalog.
+Suppliers can modify the product code for future orders at https://supplier.rekki.com
+- **`name`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+Item name as would be defined on the customer's product list.
+- **`currency`**  <span style="font-size: 12px; font-weight: 500;">optional, default is GBP</span>
+Currency code for the price. In [ISO 4217][] three-letter format.
+- **`units_prices`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+List of units and their prices that the item can be ordered in.
+- **`units_prices.unit`**  <span style="font-size: 12px; font-weight: 500;">required</span>
+A unit that the item can be ordered in.
+- **`units_prices.price_cents`**  <span style="font-size: 12px; font-weight: 500;">optional, default is 0</span>
+The order price in cents for the item per unit.
+For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50.
+- **`units_prices.stock_count`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+The number of items in stock for the related unit.
+- **`availability`**  <span style="font-size: 12px; font-weight: 500;">optional, default is "in_stock"</span>
+Availability status of the item. Can be "in_stock", "out_of_stock", or "discontinued".
+- **`description`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Short description of the item.
+- **`allergens`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of allergens for the item, if any.
+- **`allergens.type`**  <span style="font-size: 12px; font-weight: 500;">required when allergens is given</span>
+Type of allergy. For example "contains peanuts" or "may contain peanuts".
+- **`allergens.symptoms`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of symptoms for the allergy.
+- **`order_cutoff_times`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Cutt-off times are the minimum amount of time before delivery when the item can still be ordered.
+- **`order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}`**  <span style="font-size: 12px; font-weight: 500;">optional</span>
+Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day.
+- **`replacement_products`**   <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of product codes for alternative items when this item is not available.
+- **`seasonality`**   <span style="font-size: 12px; font-weight: 500;">optional</span>
+List of date ranges when the item is in-season.
+- **`seasonality.start_date`**  <span style="font-size: 12px; font-weight: 500;">required when seasonality is given</span>
+  The start date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.
+  - **`seasonality.end_date`**  <span style="font-size: 12px; font-weight: 500;">required when seasonality is given</span>
+    The end date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return V3CatalogItems
-*/
-func (a *CatalogApiService) UpdateCatalogItemsV3(ctx _context.Context, xREKKIAuthorizationType string, input V3UpdateCatalogInput) (V3CatalogItems, *_nethttp.Response, error) {
+ * @return ApiUpdateCatalogItemsV3Request
+ */
+func (a *CatalogApiService) UpdateCatalogItemsV3(ctx _context.Context) ApiUpdateCatalogItemsV3Request {
+	return ApiUpdateCatalogItemsV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3CatalogItems
+ */
+func (a *CatalogApiService) UpdateCatalogItemsV3Execute(r ApiUpdateCatalogItemsV3Request) (V3CatalogItems, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1326,11 +1961,22 @@ func (a *CatalogApiService) UpdateCatalogItemsV3(ctx _context.Context, xREKKIAut
 		localVarReturnValue  V3CatalogItems
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/catalog/items"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "CatalogApiService.UpdateCatalogItemsV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/catalog/items"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -1349,27 +1995,29 @@ func (a *CatalogApiService) UpdateCatalogItemsV3(ctx _context.Context, xREKKIAut
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}

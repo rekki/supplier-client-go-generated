@@ -1,5 +1,5 @@
 /*
- * Rekki.com Supply API
+ * Rekki.com Supplier API
  *
  * The base URL for all API endpoints is https://api.rekki.com  Api key value contains of word Bearer together with api key that you can get from integrations@rekki.com 
  *
@@ -26,15 +26,58 @@ var (
 // OrdersApiService OrdersApi service
 type OrdersApiService service
 
+type ApiConfirmOrdersRequest struct {
+	ctx _context.Context
+	ApiService *OrdersApiService
+	xREKKIAuthorizationType *string
+	input *MainSetIntegrateOrdersInput
+}
+
+func (r ApiConfirmOrdersRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiConfirmOrdersRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiConfirmOrdersRequest) Input(input MainSetIntegrateOrdersInput) ApiConfirmOrdersRequest {
+	r.input = &input
+	return r
+}
+
+func (r ApiConfirmOrdersRequest) Execute() (MainSetIntegrateOrdersInput, *_nethttp.Response, error) {
+	return r.ApiService.ConfirmOrdersExecute(r)
+}
+
 /*
-ConfirmOrders Confirm a pending order by its reference code.
-Notifies the buyer that the order has been acknowledged.  Status:&#x60; 200 OK&#x60; Body: &#x60;{ success: true}&#x60;  Status: &#x60;400 Conflict&#x60; Body: &#x60;{\&quot;error\&quot;:\&quot;Order already confirmed\&quot;,\&quot;order_id\&quot;:...}&#x60;  Status: &#x60;400 Not Found&#x60; Body: &#x60;{\&quot;error\&quot;:\&quot;Order not found\&quot;,\&quot;order_id\&quot;:...}&#x60;  in errors order_id denotes the order that failed to be confirmed  **the processing stops at first error** 
+ * ConfirmOrders Confirm a pending order by its reference code.
+ * Notifies the buyer that the order has been acknowledged.
+
+Status:` 200 OK`
+Body: `{ success: true}`
+
+Status: `400 Conflict`
+Body: `{"error":"Order already confirmed","order_id":...}`
+
+Status: `400 Not Found`
+Body: `{"error":"Order not found","order_id":...}`
+
+in errors order_id denotes the order that failed to be confirmed
+
+**the processing stops at first error**
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return MainSetIntegrateOrdersInput
-*/
-func (a *OrdersApiService) ConfirmOrders(ctx _context.Context, xREKKIAuthorizationType string, input MainSetIntegrateOrdersInput) (MainSetIntegrateOrdersInput, *_nethttp.Response, error) {
+ * @return ApiConfirmOrdersRequest
+ */
+func (a *OrdersApiService) ConfirmOrders(ctx _context.Context) ApiConfirmOrdersRequest {
+	return ApiConfirmOrdersRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainSetIntegrateOrdersInput
+ */
+func (a *OrdersApiService) ConfirmOrdersExecute(r ApiConfirmOrdersRequest) (MainSetIntegrateOrdersInput, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -44,11 +87,22 @@ func (a *OrdersApiService) ConfirmOrders(ctx _context.Context, xREKKIAuthorizati
 		localVarReturnValue  MainSetIntegrateOrdersInput
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/orders/confirm"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersApiService.ConfirmOrders")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/orders/confirm"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -67,27 +121,29 @@ func (a *OrdersApiService) ConfirmOrders(ctx _context.Context, xREKKIAuthorizati
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -147,15 +203,58 @@ func (a *OrdersApiService) ConfirmOrders(ctx _context.Context, xREKKIAuthorizati
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiConfirmOrdersV3Request struct {
+	ctx _context.Context
+	ApiService *OrdersApiService
+	xREKKIAuthorizationType *string
+	input *V3ConfirmOrdersInput
+}
+
+func (r ApiConfirmOrdersV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiConfirmOrdersV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiConfirmOrdersV3Request) Input(input V3ConfirmOrdersInput) ApiConfirmOrdersV3Request {
+	r.input = &input
+	return r
+}
+
+func (r ApiConfirmOrdersV3Request) Execute() (V3ConfirmOrdersInput, *_nethttp.Response, error) {
+	return r.ApiService.ConfirmOrdersV3Execute(r)
+}
+
 /*
-ConfirmOrdersV3 Confirm a pending order by its reference code.
-Notifies the buyer that the order has been acknowledged.  Status:&#x60; 200 OK&#x60; Body: &#x60;{ success: true}&#x60;  Status: &#x60;400 Conflict&#x60; Body: &#x60;{\&quot;error\&quot;:\&quot;Order already confirmed\&quot;,\&quot;order_id\&quot;:...}&#x60;  Status: &#x60;400 Not Found&#x60; Body: &#x60;{\&quot;error\&quot;:\&quot;Order not found\&quot;,\&quot;order_id\&quot;:...}&#x60;  in errors order_id denotes the order that failed to be confirmed  **the processing stops at first error** 
+ * ConfirmOrdersV3 Confirm a pending order by its reference code.
+ * Notifies the buyer that the order has been acknowledged.
+
+Status:` 200 OK`
+Body: `{ success: true}`
+
+Status: `400 Conflict`
+Body: `{"error":"Order already confirmed","order_id":...}`
+
+Status: `400 Not Found`
+Body: `{"error":"Order not found","order_id":...}`
+
+in errors order_id denotes the order that failed to be confirmed
+
+**the processing stops at first error**
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return V3ConfirmOrdersInput
-*/
-func (a *OrdersApiService) ConfirmOrdersV3(ctx _context.Context, xREKKIAuthorizationType string, input V3ConfirmOrdersInput) (V3ConfirmOrdersInput, *_nethttp.Response, error) {
+ * @return ApiConfirmOrdersV3Request
+ */
+func (a *OrdersApiService) ConfirmOrdersV3(ctx _context.Context) ApiConfirmOrdersV3Request {
+	return ApiConfirmOrdersV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3ConfirmOrdersInput
+ */
+func (a *OrdersApiService) ConfirmOrdersV3Execute(r ApiConfirmOrdersV3Request) (V3ConfirmOrdersInput, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -165,11 +264,22 @@ func (a *OrdersApiService) ConfirmOrdersV3(ctx _context.Context, xREKKIAuthoriza
 		localVarReturnValue  V3ConfirmOrdersInput
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/orders/confirm"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersApiService.ConfirmOrdersV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/orders/confirm"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -188,27 +298,29 @@ func (a *OrdersApiService) ConfirmOrdersV3(ctx _context.Context, xREKKIAuthoriza
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -268,14 +380,43 @@ func (a *OrdersApiService) ConfirmOrdersV3(ctx _context.Context, xREKKIAuthoriza
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiListNotIntegratedOrdersRequest struct {
+	ctx _context.Context
+	ApiService *OrdersApiService
+	xREKKIAuthorizationType *string
+	input *MainOrderListInput
+}
+
+func (r ApiListNotIntegratedOrdersRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiListNotIntegratedOrdersRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiListNotIntegratedOrdersRequest) Input(input MainOrderListInput) ApiListNotIntegratedOrdersRequest {
+	r.input = &input
+	return r
+}
+
+func (r ApiListNotIntegratedOrdersRequest) Execute() (MainOrderListOutput, *_nethttp.Response, error) {
+	return r.ApiService.ListNotIntegratedOrdersExecute(r)
+}
+
 /*
-ListNotIntegratedOrders Lists all orders placed for the supplier that were placed through REKKI and not marked as integrated.
+ * ListNotIntegratedOrders Lists all orders placed for the supplier that were placed through REKKI and not marked as integrated.
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return MainOrderListOutput
-*/
-func (a *OrdersApiService) ListNotIntegratedOrders(ctx _context.Context, xREKKIAuthorizationType string, input MainOrderListInput) (MainOrderListOutput, *_nethttp.Response, error) {
+ * @return ApiListNotIntegratedOrdersRequest
+ */
+func (a *OrdersApiService) ListNotIntegratedOrders(ctx _context.Context) ApiListNotIntegratedOrdersRequest {
+	return ApiListNotIntegratedOrdersRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainOrderListOutput
+ */
+func (a *OrdersApiService) ListNotIntegratedOrdersExecute(r ApiListNotIntegratedOrdersRequest) (MainOrderListOutput, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -285,11 +426,22 @@ func (a *OrdersApiService) ListNotIntegratedOrders(ctx _context.Context, xREKKIA
 		localVarReturnValue  MainOrderListOutput
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/orders/list_not_integrated"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersApiService.ListNotIntegratedOrders")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/orders/list_not_integrated"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -308,27 +460,29 @@ func (a *OrdersApiService) ListNotIntegratedOrders(ctx _context.Context, xREKKIA
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -388,15 +542,113 @@ func (a *OrdersApiService) ListNotIntegratedOrders(ctx _context.Context, xREKKIA
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiListOrdersBySupplierRequest struct {
+	ctx _context.Context
+	ApiService *OrdersApiService
+	xREKKIAuthorizationType *string
+	input *MainOrderListInput
+}
+
+func (r ApiListOrdersBySupplierRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiListOrdersBySupplierRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiListOrdersBySupplierRequest) Input(input MainOrderListInput) ApiListOrdersBySupplierRequest {
+	r.input = &input
+	return r
+}
+
+func (r ApiListOrdersBySupplierRequest) Execute() (MainOrderListOutput, *_nethttp.Response, error) {
+	return r.ApiService.ListOrdersBySupplierExecute(r)
+}
+
 /*
-ListOrdersBySupplier Lists all orders placed for the supplier that were placed through REKKI.
-Orders are limited to max 30 days old (i.e. timestamp must be within 30 days).  We recommend polling for orders by setting the new request timestamp to the time of the last successful request.  After you start using the API, you should request orders since last received order&#39;s inserted_at_ts, since the API returns orders created &gt;&#x3D; of the requested timestamp, you will always get at order from which you took the timestamp in the response. This will be explained again in the provided example.  Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received&#39;s reference and ignore the duplicate.  After you start using the API, you should request orders since last received order&#39;s inserted_at_ts, since the API returns orders created &gt;&#x3D; of the requested timestamp, you will **always** get at order from which you took the timestamp in the response. This will be explained again in the provided example.  Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received&#39;s reference and ignore the duplicate.  ## Exaple usage  In this JavaScript example, all orders are retrieved. Then it keeps pulling for new orders since the last order, every hour.    &#x60;&#x60;&#x60;   const fetch &#x3D; require(\&quot;node-fetch\&quot;);    const sleep &#x3D; function sleep(ms) {     return new Promise(resolve &#x3D;&gt; setTimeout(resolve, ms));   };    const fetch_orders &#x3D; async function(token, since) {     let r &#x3D; await fetch(       \&quot;https://api.rekki.com/api/catalog/integration/list_orders_by_supplier\&quot;,       {         method: \&quot;POST\&quot;,         headers: {           Authorization: \&quot;Bearer \&quot; + token,           \&quot;X-REKKI-Authorization-Type\&quot;: \&quot;supplier_api_token\&quot;,           \&quot;Content-Type\&quot;: \&quot;application/json\&quot;,           Accept: \&quot;application/json\&quot;         },         body: JSON.stringify({ since })       }     );     return await r.json();   };    const poll &#x3D; async function(token, last_rekki_order_time) {     let last_order_reference &#x3D; undefined;      while (true) {       console.log(\&quot;requesting orders since \&quot; + last_rekki_order_time);       let response &#x3D; await fetch_orders(token, last_rekki_order_time);        for (let order of response.orders) {         if (order.reference &#x3D;&#x3D; last_order_reference) {           // here is where we are ignoring the order we           // took the inserted_at_ts from           // but since we can have more orders in the same inserted_at_ts           // you can&#39;t just do since: inserted_at_ts+1           continue;         }         if (order.inserted_at_ts &gt;&#x3D; last_rekki_order_time) {           last_rekki_order_time &#x3D; order.inserted_at_ts;           last_order_reference &#x3D; order.reference;         }          // process(order)         console.log(order);       }       await sleep(3600 * 1000); // wait 1 hour     }   };    poll(\&quot;XXXXXXX-XXXX-XXXX-XXXXX-XXXXXXXXXXXX\&quot;, parseInt((+new Date() /1000) - 3600 * 24 * 30));   &#x60;&#x60;&#x60; 
+ * ListOrdersBySupplier Lists all orders placed for the supplier that were placed through REKKI.
+ * Orders are limited to max 30 days old (i.e. timestamp must be within 30 days).
+
+We recommend polling for orders by setting the new request timestamp to the time of the last successful request.
+
+After you start using the API, you should request orders since last received order's inserted_at_ts, since the API returns orders created >= of the requested timestamp, you will always get at order from which you took the timestamp in the response. This will be explained again in the provided example.
+
+Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received's reference and ignore the duplicate.
+
+After you start using the API, you should request orders since last received order's inserted_at_ts, since the API returns orders created >= of the requested timestamp, you will **always** get at order from which you took the timestamp in the response. This will be explained again in the provided example.
+
+Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received's reference and ignore the duplicate.
+
+## Exaple usage
+
+In this JavaScript example, all orders are retrieved. Then it keeps pulling for new orders since the last order, every hour.
+
+  ```
+  const fetch = require("node-fetch");
+
+  const sleep = function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  };
+
+  const fetch_orders = async function(token, since) {
+    let r = await fetch(
+      "https://api.rekki.com/api/catalog/integration/list_orders_by_supplier",
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token,
+          "X-REKKI-Authorization-Type": "supplier_api_token",
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({ since })
+      }
+    );
+    return await r.json();
+  };
+
+  const poll = async function(token, last_rekki_order_time) {
+    let last_order_reference = undefined;
+
+    while (true) {
+      console.log("requesting orders since " + last_rekki_order_time);
+      let response = await fetch_orders(token, last_rekki_order_time);
+
+      for (let order of response.orders) {
+        if (order.reference == last_order_reference) {
+          // here is where we are ignoring the order we
+          // took the inserted_at_ts from
+          // but since we can have more orders in the same inserted_at_ts
+          // you can't just do since: inserted_at_ts+1
+          continue;
+        }
+        if (order.inserted_at_ts >= last_rekki_order_time) {
+          last_rekki_order_time = order.inserted_at_ts;
+          last_order_reference = order.reference;
+        }
+
+        // process(order)
+        console.log(order);
+      }
+      await sleep(3600 * 1000); // wait 1 hour
+    }
+  };
+
+  poll("XXXXXXX-XXXX-XXXX-XXXXX-XXXXXXXXXXXX", parseInt((+new Date() /1000) - 3600 * 24 * 30));
+  ```
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return MainOrderListOutput
-*/
-func (a *OrdersApiService) ListOrdersBySupplier(ctx _context.Context, xREKKIAuthorizationType string, input MainOrderListInput) (MainOrderListOutput, *_nethttp.Response, error) {
+ * @return ApiListOrdersBySupplierRequest
+ */
+func (a *OrdersApiService) ListOrdersBySupplier(ctx _context.Context) ApiListOrdersBySupplierRequest {
+	return ApiListOrdersBySupplierRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainOrderListOutput
+ */
+func (a *OrdersApiService) ListOrdersBySupplierExecute(r ApiListOrdersBySupplierRequest) (MainOrderListOutput, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -406,11 +658,22 @@ func (a *OrdersApiService) ListOrdersBySupplier(ctx _context.Context, xREKKIAuth
 		localVarReturnValue  MainOrderListOutput
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/orders/list"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersApiService.ListOrdersBySupplier")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/orders/list"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -429,27 +692,29 @@ func (a *OrdersApiService) ListOrdersBySupplier(ctx _context.Context, xREKKIAuth
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -509,15 +774,117 @@ func (a *OrdersApiService) ListOrdersBySupplier(ctx _context.Context, xREKKIAuth
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiListOrdersBySupplierV3Request struct {
+	ctx _context.Context
+	ApiService *OrdersApiService
+	xREKKIAuthorizationType *string
+	input *V3OrderListInput
+}
+
+func (r ApiListOrdersBySupplierV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiListOrdersBySupplierV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiListOrdersBySupplierV3Request) Input(input V3OrderListInput) ApiListOrdersBySupplierV3Request {
+	r.input = &input
+	return r
+}
+
+func (r ApiListOrdersBySupplierV3Request) Execute() (V3OrderListOutput, *_nethttp.Response, error) {
+	return r.ApiService.ListOrdersBySupplierV3Execute(r)
+}
+
 /*
-ListOrdersBySupplierV3 Lists all orders placed for the supplier that were placed through REKKI.
-**UPDATE TO REFLECT V3 CHANGES**  Orders are limited to max 30 days old (i.e. timestamp must be within 30 days).  We recommend polling for orders by setting the new request timestamp to the time of the last successful request.  After you start using the API, you should request orders since last received order&#39;s inserted_at_ts, since the API returns orders created &gt;&#x3D; of the requested timestamp, you will always get at order from which you took the timestamp in the response. This will be explained again in the provided example.  Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received&#39;s reference and ignore the duplicate.  After you start using the API, you should request orders since last received order&#39;s inserted_at_ts, since the API returns orders created &gt;&#x3D; of the requested timestamp, you will **always** get at order from which you took the timestamp in the response. This will be explained again in the provided example.  Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received&#39;s reference and ignore the duplicate.  ## Exaple usage  In this JavaScript example, all orders are retrieved. Then it keeps pulling for new orders since the last order, every hour.    &#x60;&#x60;&#x60;   const fetch &#x3D; require(\&quot;node-fetch\&quot;);    const sleep &#x3D; function sleep(ms) {     return new Promise(resolve &#x3D;&gt; setTimeout(resolve, ms));   };    const fetch_orders &#x3D; async function(token, since) {     let r &#x3D; await fetch(       \&quot;https://api.rekki.com/api/catalog/integration/list_orders_by_supplier\&quot;,       {         method: \&quot;POST\&quot;,         headers: {           Authorization: \&quot;Bearer \&quot; + token,           \&quot;X-REKKI-Authorization-Type\&quot;: \&quot;supplier_api_token\&quot;,           \&quot;Content-Type\&quot;: \&quot;application/json\&quot;,           Accept: \&quot;application/json\&quot;         },         body: JSON.stringify({ since })       }     );     return await r.json();   };    const poll &#x3D; async function(token, last_rekki_order_time) {     let last_order_reference &#x3D; undefined;      while (true) {       console.log(\&quot;requesting orders since \&quot; + last_rekki_order_time);       let response &#x3D; await fetch_orders(token, last_rekki_order_time.toISOString());        for (let order of response.orders) {         if (order.reference &#x3D;&#x3D; last_order_reference) {           // here is where we are ignoring the order we           // took the inserted_at from           // but since we can have more orders in the same inserted_at           // you can&#39;t just do since: inserted_at + 1 second           continue;         }         if (+new Date(order.inserted_at) &gt;&#x3D; +last_rekki_order_time) {           last_rekki_order_time &#x3D; order.inserted_at;           last_order_reference &#x3D; order.reference;         }          // process(order)         console.log(order);       }       await sleep(3600 * 1000); // wait 1 hour     }   };    let startDate &#x3D; new Date()   startDate.setDate(startDate.getDate() - 30)   poll(\&quot;XXXXXXX-XXXX-XXXX-XXXXX-XXXXXXXXXXXX\&quot;, startDate)   &#x60;&#x60;&#x60; 
+ * ListOrdersBySupplierV3 Lists all orders placed for the supplier that were placed through REKKI.
+ * **UPDATE TO REFLECT V3 CHANGES**
+
+Orders are limited to max 30 days old (i.e. timestamp must be within 30 days).
+
+We recommend polling for orders by setting the new request timestamp to the time of the last successful request.
+
+After you start using the API, you should request orders since last received order's inserted_at_ts, since the API returns orders created >= of the requested timestamp, you will always get at order from which you took the timestamp in the response. This will be explained again in the provided example.
+
+Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received's reference and ignore the duplicate.
+
+After you start using the API, you should request orders since last received order's inserted_at_ts, since the API returns orders created >= of the requested timestamp, you will **always** get at order from which you took the timestamp in the response. This will be explained again in the provided example.
+
+Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received's reference and ignore the duplicate.
+
+## Exaple usage
+
+In this JavaScript example, all orders are retrieved. Then it keeps pulling for new orders since the last order, every hour.
+
+  ```
+  const fetch = require("node-fetch");
+
+  const sleep = function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  };
+
+  const fetch_orders = async function(token, since) {
+    let r = await fetch(
+      "https://api.rekki.com/api/catalog/integration/list_orders_by_supplier",
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token,
+          "X-REKKI-Authorization-Type": "supplier_api_token",
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        },
+        body: JSON.stringify({ since })
+      }
+    );
+    return await r.json();
+  };
+
+  const poll = async function(token, last_rekki_order_time) {
+    let last_order_reference = undefined;
+
+    while (true) {
+      console.log("requesting orders since " + last_rekki_order_time);
+      let response = await fetch_orders(token, last_rekki_order_time.toISOString());
+
+      for (let order of response.orders) {
+        if (order.reference == last_order_reference) {
+          // here is where we are ignoring the order we
+          // took the inserted_at from
+          // but since we can have more orders in the same inserted_at
+          // you can't just do since: inserted_at + 1 second
+          continue;
+        }
+        if (+new Date(order.inserted_at) >= +last_rekki_order_time) {
+          last_rekki_order_time = order.inserted_at;
+          last_order_reference = order.reference;
+        }
+
+        // process(order)
+        console.log(order);
+      }
+      await sleep(3600 * 1000); // wait 1 hour
+    }
+  };
+
+  let startDate = new Date()
+  startDate.setDate(startDate.getDate() - 30)
+  poll("XXXXXXX-XXXX-XXXX-XXXXX-XXXXXXXXXXXX", startDate)
+  ```
+
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return V3OrderListOutput
-*/
-func (a *OrdersApiService) ListOrdersBySupplierV3(ctx _context.Context, xREKKIAuthorizationType string, input V3OrderListInput) (V3OrderListOutput, *_nethttp.Response, error) {
+ * @return ApiListOrdersBySupplierV3Request
+ */
+func (a *OrdersApiService) ListOrdersBySupplierV3(ctx _context.Context) ApiListOrdersBySupplierV3Request {
+	return ApiListOrdersBySupplierV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3OrderListOutput
+ */
+func (a *OrdersApiService) ListOrdersBySupplierV3Execute(r ApiListOrdersBySupplierV3Request) (V3OrderListOutput, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -527,11 +894,22 @@ func (a *OrdersApiService) ListOrdersBySupplierV3(ctx _context.Context, xREKKIAu
 		localVarReturnValue  V3OrderListOutput
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/orders/list"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersApiService.ListOrdersBySupplierV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/orders/list"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -550,27 +928,29 @@ func (a *OrdersApiService) ListOrdersBySupplierV3(ctx _context.Context, xREKKIAu
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -630,14 +1010,43 @@ func (a *OrdersApiService) ListOrdersBySupplierV3(ctx _context.Context, xREKKIAu
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiMarkIntegrationErrorRequest struct {
+	ctx _context.Context
+	ApiService *OrdersApiService
+	xREKKIAuthorizationType *string
+	input *MainSetErrorOrderInput
+}
+
+func (r ApiMarkIntegrationErrorRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiMarkIntegrationErrorRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiMarkIntegrationErrorRequest) Input(input MainSetErrorOrderInput) ApiMarkIntegrationErrorRequest {
+	r.input = &input
+	return r
+}
+
+func (r ApiMarkIntegrationErrorRequest) Execute() (MainSuccessConfirmation, *_nethttp.Response, error) {
+	return r.ApiService.MarkIntegrationErrorExecute(r)
+}
+
 /*
-MarkIntegrationError Report failure to integrate an order
+ * MarkIntegrationError Report failure to integrate an order
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return MainSuccessConfirmation
-*/
-func (a *OrdersApiService) MarkIntegrationError(ctx _context.Context, xREKKIAuthorizationType string, input MainSetErrorOrderInput) (MainSuccessConfirmation, *_nethttp.Response, error) {
+ * @return ApiMarkIntegrationErrorRequest
+ */
+func (a *OrdersApiService) MarkIntegrationError(ctx _context.Context) ApiMarkIntegrationErrorRequest {
+	return ApiMarkIntegrationErrorRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainSuccessConfirmation
+ */
+func (a *OrdersApiService) MarkIntegrationErrorExecute(r ApiMarkIntegrationErrorRequest) (MainSuccessConfirmation, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -647,11 +1056,22 @@ func (a *OrdersApiService) MarkIntegrationError(ctx _context.Context, xREKKIAuth
 		localVarReturnValue  MainSuccessConfirmation
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/orders/set_error"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersApiService.MarkIntegrationError")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/orders/set_error"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -670,27 +1090,29 @@ func (a *OrdersApiService) MarkIntegrationError(ctx _context.Context, xREKKIAuth
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -750,14 +1172,43 @@ func (a *OrdersApiService) MarkIntegrationError(ctx _context.Context, xREKKIAuth
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiMarkIntegrationErrorV3Request struct {
+	ctx _context.Context
+	ApiService *OrdersApiService
+	xREKKIAuthorizationType *string
+	input *V3SetErrorOrderInput
+}
+
+func (r ApiMarkIntegrationErrorV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiMarkIntegrationErrorV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiMarkIntegrationErrorV3Request) Input(input V3SetErrorOrderInput) ApiMarkIntegrationErrorV3Request {
+	r.input = &input
+	return r
+}
+
+func (r ApiMarkIntegrationErrorV3Request) Execute() (V3SuccessConfirmation, *_nethttp.Response, error) {
+	return r.ApiService.MarkIntegrationErrorV3Execute(r)
+}
+
 /*
-MarkIntegrationErrorV3 Report failure to integrate an order
+ * MarkIntegrationErrorV3 Report failure to integrate an order
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return V3SuccessConfirmation
-*/
-func (a *OrdersApiService) MarkIntegrationErrorV3(ctx _context.Context, xREKKIAuthorizationType string, input V3SetErrorOrderInput) (V3SuccessConfirmation, *_nethttp.Response, error) {
+ * @return ApiMarkIntegrationErrorV3Request
+ */
+func (a *OrdersApiService) MarkIntegrationErrorV3(ctx _context.Context) ApiMarkIntegrationErrorV3Request {
+	return ApiMarkIntegrationErrorV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3SuccessConfirmation
+ */
+func (a *OrdersApiService) MarkIntegrationErrorV3Execute(r ApiMarkIntegrationErrorV3Request) (V3SuccessConfirmation, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -767,11 +1218,22 @@ func (a *OrdersApiService) MarkIntegrationErrorV3(ctx _context.Context, xREKKIAu
 		localVarReturnValue  V3SuccessConfirmation
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/orders/set_error"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersApiService.MarkIntegrationErrorV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/orders/set_error"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -790,27 +1252,29 @@ func (a *OrdersApiService) MarkIntegrationErrorV3(ctx _context.Context, xREKKIAu
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -870,14 +1334,43 @@ func (a *OrdersApiService) MarkIntegrationErrorV3(ctx _context.Context, xREKKIAu
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiMarkOrdersIntegratedRequest struct {
+	ctx _context.Context
+	ApiService *OrdersApiService
+	xREKKIAuthorizationType *string
+	input *MainSetIntegrateOrdersInput
+}
+
+func (r ApiMarkOrdersIntegratedRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiMarkOrdersIntegratedRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiMarkOrdersIntegratedRequest) Input(input MainSetIntegrateOrdersInput) ApiMarkOrdersIntegratedRequest {
+	r.input = &input
+	return r
+}
+
+func (r ApiMarkOrdersIntegratedRequest) Execute() (MainUpdateSuccess, *_nethttp.Response, error) {
+	return r.ApiService.MarkOrdersIntegratedExecute(r)
+}
+
 /*
-MarkOrdersIntegrated Mark orders as integrated
+ * MarkOrdersIntegrated Mark orders as integrated
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return MainUpdateSuccess
-*/
-func (a *OrdersApiService) MarkOrdersIntegrated(ctx _context.Context, xREKKIAuthorizationType string, input MainSetIntegrateOrdersInput) (MainUpdateSuccess, *_nethttp.Response, error) {
+ * @return ApiMarkOrdersIntegratedRequest
+ */
+func (a *OrdersApiService) MarkOrdersIntegrated(ctx _context.Context) ApiMarkOrdersIntegratedRequest {
+	return ApiMarkOrdersIntegratedRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return MainUpdateSuccess
+ */
+func (a *OrdersApiService) MarkOrdersIntegratedExecute(r ApiMarkOrdersIntegratedRequest) (MainUpdateSuccess, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -887,11 +1380,22 @@ func (a *OrdersApiService) MarkOrdersIntegrated(ctx _context.Context, xREKKIAuth
 		localVarReturnValue  MainUpdateSuccess
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/orders/set_integrated"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersApiService.MarkOrdersIntegrated")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/orders/set_integrated"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -910,27 +1414,29 @@ func (a *OrdersApiService) MarkOrdersIntegrated(ctx _context.Context, xREKKIAuth
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -990,14 +1496,43 @@ func (a *OrdersApiService) MarkOrdersIntegrated(ctx _context.Context, xREKKIAuth
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiMarkOrdersIntegratedV3Request struct {
+	ctx _context.Context
+	ApiService *OrdersApiService
+	xREKKIAuthorizationType *string
+	input *V3SetIntegratedOrdersInput
+}
+
+func (r ApiMarkOrdersIntegratedV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiMarkOrdersIntegratedV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiMarkOrdersIntegratedV3Request) Input(input V3SetIntegratedOrdersInput) ApiMarkOrdersIntegratedV3Request {
+	r.input = &input
+	return r
+}
+
+func (r ApiMarkOrdersIntegratedV3Request) Execute() (V3UpdateSuccess, *_nethttp.Response, error) {
+	return r.ApiService.MarkOrdersIntegratedV3Execute(r)
+}
+
 /*
-MarkOrdersIntegratedV3 Mark orders as integrated
+ * MarkOrdersIntegratedV3 Mark orders as integrated
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return V3UpdateSuccess
-*/
-func (a *OrdersApiService) MarkOrdersIntegratedV3(ctx _context.Context, xREKKIAuthorizationType string, input V3SetIntegratedOrdersInput) (V3UpdateSuccess, *_nethttp.Response, error) {
+ * @return ApiMarkOrdersIntegratedV3Request
+ */
+func (a *OrdersApiService) MarkOrdersIntegratedV3(ctx _context.Context) ApiMarkOrdersIntegratedV3Request {
+	return ApiMarkOrdersIntegratedV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return V3UpdateSuccess
+ */
+func (a *OrdersApiService) MarkOrdersIntegratedV3Execute(r ApiMarkOrdersIntegratedV3Request) (V3UpdateSuccess, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -1007,11 +1542,22 @@ func (a *OrdersApiService) MarkOrdersIntegratedV3(ctx _context.Context, xREKKIAu
 		localVarReturnValue  V3UpdateSuccess
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/orders/set_integrated"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "OrdersApiService.MarkOrdersIntegratedV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/orders/set_integrated"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -1030,27 +1576,29 @@ func (a *OrdersApiService) MarkOrdersIntegratedV3(ctx _context.Context, xREKKIAu
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}

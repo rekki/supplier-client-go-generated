@@ -18,20 +18,53 @@ Method | HTTP request | Description
 
 ## ConfirmOrders
 
-> MainSetIntegrateOrdersInput ConfirmOrders(ctx, xREKKIAuthorizationType, input)
+> MainSetIntegrateOrdersInput ConfirmOrders(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Confirm a pending order by its reference code.
 
-Notifies the buyer that the order has been acknowledged.  Status:` 200 OK` Body: `{ success: true}`  Status: `400 Conflict` Body: `{\"error\":\"Order already confirmed\",\"order_id\":...}`  Status: `400 Not Found` Body: `{\"error\":\"Order not found\",\"order_id\":...}`  in errors order_id denotes the order that failed to be confirmed  **the processing stops at first error** 
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.main.SetIntegrateOrdersInput{Orders: []map[string]interface{}{123)} // MainSetIntegrateOrdersInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.OrdersApi.ConfirmOrders(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `OrdersApi.ConfirmOrders``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `ConfirmOrders`: MainSetIntegrateOrdersInput
+    fmt.Fprintf(os.Stdout, "Response from `OrdersApi.ConfirmOrders`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiConfirmOrdersRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**MainSetIntegrateOrdersInput**](MainSetIntegrateOrdersInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**MainSetIntegrateOrdersInput**](MainSetIntegrateOrdersInput.md) | Payload | 
 
 ### Return type
 
@@ -53,20 +86,53 @@ Name | Type | Description  | Notes
 
 ## ConfirmOrdersV3
 
-> V3ConfirmOrdersInput ConfirmOrdersV3(ctx, xREKKIAuthorizationType, input)
+> V3ConfirmOrdersInput ConfirmOrdersV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Confirm a pending order by its reference code.
 
-Notifies the buyer that the order has been acknowledged.  Status:` 200 OK` Body: `{ success: true}`  Status: `400 Conflict` Body: `{\"error\":\"Order already confirmed\",\"order_id\":...}`  Status: `400 Not Found` Body: `{\"error\":\"Order not found\",\"order_id\":...}`  in errors order_id denotes the order that failed to be confirmed  **the processing stops at first error** 
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.v3.ConfirmOrdersInput{Orders: []string{"Orders_example")} // V3ConfirmOrdersInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.OrdersApi.ConfirmOrdersV3(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `OrdersApi.ConfirmOrdersV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `ConfirmOrdersV3`: V3ConfirmOrdersInput
+    fmt.Fprintf(os.Stdout, "Response from `OrdersApi.ConfirmOrdersV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiConfirmOrdersV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**V3ConfirmOrdersInput**](V3ConfirmOrdersInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**V3ConfirmOrdersInput**](V3ConfirmOrdersInput.md) | Payload | 
 
 ### Return type
 
@@ -88,18 +154,51 @@ Name | Type | Description  | Notes
 
 ## ListNotIntegratedOrders
 
-> MainOrderListOutput ListNotIntegratedOrders(ctx, xREKKIAuthorizationType, input)
+> MainOrderListOutput ListNotIntegratedOrders(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Lists all orders placed for the supplier that were placed through REKKI and not marked as integrated.
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.main.OrderListInput{Since: 123} // MainOrderListInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.OrdersApi.ListNotIntegratedOrders(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `OrdersApi.ListNotIntegratedOrders``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `ListNotIntegratedOrders`: MainOrderListOutput
+    fmt.Fprintf(os.Stdout, "Response from `OrdersApi.ListNotIntegratedOrders`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListNotIntegratedOrdersRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**MainOrderListInput**](MainOrderListInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**MainOrderListInput**](MainOrderListInput.md) | Payload | 
 
 ### Return type
 
@@ -121,20 +220,53 @@ Name | Type | Description  | Notes
 
 ## ListOrdersBySupplier
 
-> MainOrderListOutput ListOrdersBySupplier(ctx, xREKKIAuthorizationType, input)
+> MainOrderListOutput ListOrdersBySupplier(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Lists all orders placed for the supplier that were placed through REKKI.
 
-Orders are limited to max 30 days old (i.e. timestamp must be within 30 days).  We recommend polling for orders by setting the new request timestamp to the time of the last successful request.  After you start using the API, you should request orders since last received order's inserted_at_ts, since the API returns orders created >= of the requested timestamp, you will always get at order from which you took the timestamp in the response. This will be explained again in the provided example.  Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received's reference and ignore the duplicate.  After you start using the API, you should request orders since last received order's inserted_at_ts, since the API returns orders created >= of the requested timestamp, you will **always** get at order from which you took the timestamp in the response. This will be explained again in the provided example.  Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received's reference and ignore the duplicate.  ## Exaple usage  In this JavaScript example, all orders are retrieved. Then it keeps pulling for new orders since the last order, every hour.    ```   const fetch = require(\"node-fetch\");    const sleep = function sleep(ms) {     return new Promise(resolve => setTimeout(resolve, ms));   };    const fetch_orders = async function(token, since) {     let r = await fetch(       \"https://api.rekki.com/api/catalog/integration/list_orders_by_supplier\",       {         method: \"POST\",         headers: {           Authorization: \"Bearer \" + token,           \"X-REKKI-Authorization-Type\": \"supplier_api_token\",           \"Content-Type\": \"application/json\",           Accept: \"application/json\"         },         body: JSON.stringify({ since })       }     );     return await r.json();   };    const poll = async function(token, last_rekki_order_time) {     let last_order_reference = undefined;      while (true) {       console.log(\"requesting orders since \" + last_rekki_order_time);       let response = await fetch_orders(token, last_rekki_order_time);        for (let order of response.orders) {         if (order.reference == last_order_reference) {           // here is where we are ignoring the order we           // took the inserted_at_ts from           // but since we can have more orders in the same inserted_at_ts           // you can't just do since: inserted_at_ts+1           continue;         }         if (order.inserted_at_ts >= last_rekki_order_time) {           last_rekki_order_time = order.inserted_at_ts;           last_order_reference = order.reference;         }          // process(order)         console.log(order);       }       await sleep(3600 * 1000); // wait 1 hour     }   };    poll(\"XXXXXXX-XXXX-XXXX-XXXXX-XXXXXXXXXXXX\", parseInt((+new Date() /1000) - 3600 * 24 * 30));   ``` 
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.main.OrderListInput{Since: 123} // MainOrderListInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.OrdersApi.ListOrdersBySupplier(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `OrdersApi.ListOrdersBySupplier``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `ListOrdersBySupplier`: MainOrderListOutput
+    fmt.Fprintf(os.Stdout, "Response from `OrdersApi.ListOrdersBySupplier`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListOrdersBySupplierRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**MainOrderListInput**](MainOrderListInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**MainOrderListInput**](MainOrderListInput.md) | Payload | 
 
 ### Return type
 
@@ -156,20 +288,53 @@ Name | Type | Description  | Notes
 
 ## ListOrdersBySupplierV3
 
-> V3OrderListOutput ListOrdersBySupplierV3(ctx, xREKKIAuthorizationType, input)
+> V3OrderListOutput ListOrdersBySupplierV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Lists all orders placed for the supplier that were placed through REKKI.
 
-**UPDATE TO REFLECT V3 CHANGES**  Orders are limited to max 30 days old (i.e. timestamp must be within 30 days).  We recommend polling for orders by setting the new request timestamp to the time of the last successful request.  After you start using the API, you should request orders since last received order's inserted_at_ts, since the API returns orders created >= of the requested timestamp, you will always get at order from which you took the timestamp in the response. This will be explained again in the provided example.  Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received's reference and ignore the duplicate.  After you start using the API, you should request orders since last received order's inserted_at_ts, since the API returns orders created >= of the requested timestamp, you will **always** get at order from which you took the timestamp in the response. This will be explained again in the provided example.  Keep in mind that since you can have more than one order per since, you must not do since: last_order.inserted_at_ts + 1, but keep the last order you received's reference and ignore the duplicate.  ## Exaple usage  In this JavaScript example, all orders are retrieved. Then it keeps pulling for new orders since the last order, every hour.    ```   const fetch = require(\"node-fetch\");    const sleep = function sleep(ms) {     return new Promise(resolve => setTimeout(resolve, ms));   };    const fetch_orders = async function(token, since) {     let r = await fetch(       \"https://api.rekki.com/api/catalog/integration/list_orders_by_supplier\",       {         method: \"POST\",         headers: {           Authorization: \"Bearer \" + token,           \"X-REKKI-Authorization-Type\": \"supplier_api_token\",           \"Content-Type\": \"application/json\",           Accept: \"application/json\"         },         body: JSON.stringify({ since })       }     );     return await r.json();   };    const poll = async function(token, last_rekki_order_time) {     let last_order_reference = undefined;      while (true) {       console.log(\"requesting orders since \" + last_rekki_order_time);       let response = await fetch_orders(token, last_rekki_order_time.toISOString());        for (let order of response.orders) {         if (order.reference == last_order_reference) {           // here is where we are ignoring the order we           // took the inserted_at from           // but since we can have more orders in the same inserted_at           // you can't just do since: inserted_at + 1 second           continue;         }         if (+new Date(order.inserted_at) >= +last_rekki_order_time) {           last_rekki_order_time = order.inserted_at;           last_order_reference = order.reference;         }          // process(order)         console.log(order);       }       await sleep(3600 * 1000); // wait 1 hour     }   };    let startDate = new Date()   startDate.setDate(startDate.getDate() - 30)   poll(\"XXXXXXX-XXXX-XXXX-XXXXX-XXXXXXXXXXXX\", startDate)   ``` 
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.v3.OrderListInput{Since: "Since_example", SkipIntegrated: false} // V3OrderListInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.OrdersApi.ListOrdersBySupplierV3(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `OrdersApi.ListOrdersBySupplierV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `ListOrdersBySupplierV3`: V3OrderListOutput
+    fmt.Fprintf(os.Stdout, "Response from `OrdersApi.ListOrdersBySupplierV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiListOrdersBySupplierV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**V3OrderListInput**](V3OrderListInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**V3OrderListInput**](V3OrderListInput.md) | Payload | 
 
 ### Return type
 
@@ -191,18 +356,51 @@ Name | Type | Description  | Notes
 
 ## MarkIntegrationError
 
-> MainSuccessConfirmation MarkIntegrationError(ctx, xREKKIAuthorizationType, input)
+> MainSuccessConfirmation MarkIntegrationError(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Report failure to integrate an order
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.main.SetErrorOrderInput{Attempts: 123, Error: "Error_example", Order: openapiclient.integration.Order{ConfirmedAt: "ConfirmedAt_example", ContactInfo: "ContactInfo_example", ContactName: "ContactName_example", CustomerAccountNo: "CustomerAccountNo_example", DeliveryAddress: "DeliveryAddress_example", DeliveryOn: "DeliveryOn_example", InsertedAt: "InsertedAt_example", InsertedAtTs: 123, Items: []IntegrationOrderItem{openapiclient.integration.OrderItem{Id: "Id_example", Name: "Name_example", Price: "Price_example", PriceCents: 123, ProductCode: "ProductCode_example", Quantity: 123, Spec: "Spec_example", Units: "Units_example"}), LocationName: "LocationName_example", Notes: "Notes_example", Reference: "Reference_example", SupplierNotes: "SupplierNotes_example"}} // MainSetErrorOrderInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.OrdersApi.MarkIntegrationError(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `OrdersApi.MarkIntegrationError``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `MarkIntegrationError`: MainSuccessConfirmation
+    fmt.Fprintf(os.Stdout, "Response from `OrdersApi.MarkIntegrationError`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiMarkIntegrationErrorRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**MainSetErrorOrderInput**](MainSetErrorOrderInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**MainSetErrorOrderInput**](MainSetErrorOrderInput.md) | Payload | 
 
 ### Return type
 
@@ -224,18 +422,51 @@ Name | Type | Description  | Notes
 
 ## MarkIntegrationErrorV3
 
-> V3SuccessConfirmation MarkIntegrationErrorV3(ctx, xREKKIAuthorizationType, input)
+> V3SuccessConfirmation MarkIntegrationErrorV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Report failure to integrate an order
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.v3.SetErrorOrderInput{Orders: []V3OrderIntegrationError{openapiclient.v3.OrderIntegrationError{Attempts: 123, Error: "Error_example", Reference: "Reference_example"})} // V3SetErrorOrderInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.OrdersApi.MarkIntegrationErrorV3(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `OrdersApi.MarkIntegrationErrorV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `MarkIntegrationErrorV3`: V3SuccessConfirmation
+    fmt.Fprintf(os.Stdout, "Response from `OrdersApi.MarkIntegrationErrorV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiMarkIntegrationErrorV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**V3SetErrorOrderInput**](V3SetErrorOrderInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**V3SetErrorOrderInput**](V3SetErrorOrderInput.md) | Payload | 
 
 ### Return type
 
@@ -257,18 +488,51 @@ Name | Type | Description  | Notes
 
 ## MarkOrdersIntegrated
 
-> MainUpdateSuccess MarkOrdersIntegrated(ctx, xREKKIAuthorizationType, input)
+> MainUpdateSuccess MarkOrdersIntegrated(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Mark orders as integrated
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.main.SetIntegrateOrdersInput{Orders: []map[string]interface{}{123)} // MainSetIntegrateOrdersInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.OrdersApi.MarkOrdersIntegrated(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `OrdersApi.MarkOrdersIntegrated``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `MarkOrdersIntegrated`: MainUpdateSuccess
+    fmt.Fprintf(os.Stdout, "Response from `OrdersApi.MarkOrdersIntegrated`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiMarkOrdersIntegratedRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**MainSetIntegrateOrdersInput**](MainSetIntegrateOrdersInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**MainSetIntegrateOrdersInput**](MainSetIntegrateOrdersInput.md) | Payload | 
 
 ### Return type
 
@@ -290,18 +554,51 @@ Name | Type | Description  | Notes
 
 ## MarkOrdersIntegratedV3
 
-> V3UpdateSuccess MarkOrdersIntegratedV3(ctx, xREKKIAuthorizationType, input)
+> V3UpdateSuccess MarkOrdersIntegratedV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Mark orders as integrated
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.v3.SetIntegratedOrdersInput{Orders: []string{"Orders_example")} // V3SetIntegratedOrdersInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.OrdersApi.MarkOrdersIntegratedV3(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `OrdersApi.MarkOrdersIntegratedV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `MarkOrdersIntegratedV3`: V3UpdateSuccess
+    fmt.Fprintf(os.Stdout, "Response from `OrdersApi.MarkOrdersIntegratedV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiMarkOrdersIntegratedV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**V3SetIntegratedOrdersInput**](V3SetIntegratedOrdersInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**V3SetIntegratedOrdersInput**](V3SetIntegratedOrdersInput.md) | Payload | 
 
 ### Return type
 

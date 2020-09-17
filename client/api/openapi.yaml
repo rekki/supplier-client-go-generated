@@ -8,7 +8,7 @@ info:
     Api key value contains of word Bearer together with api key that you can get from integrations@rekki.com
   license:
     name: All rights reserved
-  title: Rekki.com Supply API
+  title: Rekki.com Supplier API
   version: ""
 servers:
 - url: https://api.rekki.com/api

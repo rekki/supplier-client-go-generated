@@ -21,20 +21,57 @@ Method | HTTP request | Description
 
 ## DeleteCatalogItem
 
-> MainSuccessConfirmation DeleteCatalogItem(ctx, xREKKIAuthorizationType, id)
+> MainSuccessConfirmation DeleteCatalogItem(ctx, id).XREKKIAuthorizationType(xREKKIAuthorizationType).Execute()
 
 Delete an item from catalog
 
-Delete an item from your catalog by its unique ID.
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    id := "id_example" // string | ID of the item to retrieve. Item IDs are discoverable when listing items.
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.DeleteCatalogItem(context.Background(), xREKKIAuthorizationType, id).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.DeleteCatalogItem``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `DeleteCatalogItem`: MainSuccessConfirmation
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.DeleteCatalogItem`: %v\n", resp)
+}
+```
+
+### Path Parameters
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**id** | **string**| ID of the item to retrieve. Item IDs are discoverable when listing items. | 
+**id** | **string** | ID of the item to retrieve. Item IDs are discoverable when listing items. | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiDeleteCatalogItemRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **xREKKIAuthorizationType** | **string** | Required header | 
+
 
 ### Return type
 
@@ -56,20 +93,53 @@ Name | Type | Description  | Notes
 
 ## DeleteCatalogItemsV3
 
-> V3SuccessConfirmation DeleteCatalogItemsV3(ctx, xREKKIAuthorizationType, input)
+> V3SuccessConfirmation DeleteCatalogItemsV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Delete items from catalog
 
-Delete items from the catalog by its unique IDs.
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.v3.DeleteCatalogItemsInput{Items: []int32{123)} // V3DeleteCatalogItemsInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.DeleteCatalogItemsV3(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.DeleteCatalogItemsV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `DeleteCatalogItemsV3`: V3SuccessConfirmation
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.DeleteCatalogItemsV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiDeleteCatalogItemsV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**V3DeleteCatalogItemsInput**](V3DeleteCatalogItemsInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**V3DeleteCatalogItemsInput**](V3DeleteCatalogItemsInput.md) | Payload | 
 
 ### Return type
 
@@ -91,22 +161,59 @@ Name | Type | Description  | Notes
 
 ## GetCatalogItem
 
-> MainApiSupplierCatalogItem GetCatalogItem(ctx, xREKKIAuthorizationType, id)
+> MainAPISupplierCatalogItem GetCatalogItem(ctx, id).XREKKIAuthorizationType(xREKKIAuthorizationType).Execute()
 
 Lists all orders placed for the supplier that were placed through REKKI.
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    id := "id_example" // string | ID of the item to retrieve. Item IDs are discoverable when listing items.
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.GetCatalogItem(context.Background(), xREKKIAuthorizationType, id).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.GetCatalogItem``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `GetCatalogItem`: MainAPISupplierCatalogItem
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.GetCatalogItem`: %v\n", resp)
+}
+```
+
+### Path Parameters
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**id** | **string**| ID of the item to retrieve. Item IDs are discoverable when listing items. | 
+**id** | **string** | ID of the item to retrieve. Item IDs are discoverable when listing items. | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGetCatalogItemRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **xREKKIAuthorizationType** | **string** | Required header | 
+
 
 ### Return type
 
-[**MainApiSupplierCatalogItem**](main.APISupplierCatalogItem.md)
+[**MainAPISupplierCatalogItem**](main.APISupplierCatalogItem.md)
 
 ### Authorization
 
@@ -124,22 +231,59 @@ Name | Type | Description  | Notes
 
 ## GetCatalogItemV3
 
-> V3ApiSupplierCatalogItem GetCatalogItemV3(ctx, xREKKIAuthorizationType, id)
+> V3APISupplierCatalogItem GetCatalogItemV3(ctx, id).XREKKIAuthorizationType(xREKKIAuthorizationType).Execute()
 
 Fetch a specific catalog item by its Id.
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    id := "id_example" // string | ID of the item to retrieve. Item IDs are discoverable when listing items.
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.GetCatalogItemV3(context.Background(), xREKKIAuthorizationType, id).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.GetCatalogItemV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `GetCatalogItemV3`: V3APISupplierCatalogItem
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.GetCatalogItemV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
 **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**id** | **string**| ID of the item to retrieve. Item IDs are discoverable when listing items. | 
+**id** | **string** | ID of the item to retrieve. Item IDs are discoverable when listing items. | 
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGetCatalogItemV3Request struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **xREKKIAuthorizationType** | **string** | Required header | 
+
 
 ### Return type
 
-[**V3ApiSupplierCatalogItem**](v3.APISupplierCatalogItem.md)
+[**V3APISupplierCatalogItem**](v3.APISupplierCatalogItem.md)
 
 ### Authorization
 
@@ -157,19 +301,51 @@ Name | Type | Description  | Notes
 
 ## GetCatalogItems
 
-> MainCatalogItems GetCatalogItems(ctx, xREKKIAuthorizationType)
+> MainCatalogItems GetCatalogItems(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Execute()
 
 Get catalog items for authenticated supplier
 
-Lists all your catalog items. Sorted by creation date, with the oldest appearing first. No input parameters. Options for pagination and sorting direction may be introduced later. Response is a JSON object with a data property that contains catalog items of the authenticated supplier.
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.GetCatalogItems(context.Background(), xREKKIAuthorizationType).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.GetCatalogItems``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `GetCatalogItems`: MainCatalogItems
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.GetCatalogItems`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGetCatalogItemsRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
 
 ### Return type
 
@@ -191,19 +367,51 @@ Name | Type | Description  | Notes
 
 ## GetCatalogItemsV3
 
-> V3CatalogItems GetCatalogItemsV3(ctx, xREKKIAuthorizationType)
+> V3CatalogItems GetCatalogItemsV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Execute()
 
 Get catalog items for authenticated supplier
 
-Lists all your catalog items. Sorted by creation date, with the oldest appearing first. No input parameters. Options for pagination and sorting direction may be introduced later. Response is a JSON object with a data property that contains catalog items of the authenticated supplier.
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.GetCatalogItemsV3(context.Background(), xREKKIAuthorizationType).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.GetCatalogItemsV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `GetCatalogItemsV3`: V3CatalogItems
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.GetCatalogItemsV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiGetCatalogItemsV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
 
 ### Return type
 
@@ -225,20 +433,53 @@ Name | Type | Description  | Notes
 
 ## ReplaceCatalog
 
-> MainSuccessConfirmation ReplaceCatalog(ctx, xREKKIAuthorizationType, input)
+> MainSuccessConfirmation ReplaceCatalog(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Drop all existing items from the catalog and upload new ones
 
-### Parameters  - **`id`** REKKI's ID to uniquely identify the catalog item (for REKKI internal reference). If `id` is specified the item will be update, if not it will attempt to insert it. - **`product_code`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> Product code for the item that maps to the supplier's catalog. Suppliers can modify the product code for future orders at https://supplier.rekki.com - **`name`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> Item name as would be defined on the customer's product list. - **`currency`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is GBP</span> Currency code for the price. In [ISO 4217][] three-letter format. - **`units_prices`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> List of units and their prices that the item can be ordered in. - **`units_prices.unit`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> A unit that the item can be ordered in. - **`units_prices.price_cents`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is 0</span> The order price in cents for the item per unit. For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50. - **`units_prices.stock_count`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> The number of items in stock for the related unit. - **`availability`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is \"in_stock\"</span> Availability status of the item. Can be \"in_stock\", \"out_of_stock\", or \"discontinued\". - **`description`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Short description of the item. - **`allergens`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of allergens for the item, if any. - **`allergens.type`**  <span style=\"font-size: 12px; font-weight: 500;\">required when allergens is given</span> Type of allergy. For example \"contains peanuts\" or \"may contain peanuts\". - **`allergens.symptoms`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of symptoms for the allergy. - **`order_cutoff_times`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Cutt-off times are the minimum amount of time before delivery when the item can still be ordered. - **`order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day. - **`replacement_products`**   <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of product codes for alternative items when this item is not available. - **`seasonality`**   <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of date ranges when the item is in-season. - **`seasonality.start_date`**  <span style=\"font-size: 12px; font-weight: 500;\">required when seasonality is given</span>   The start date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.   - **`seasonality.end_date`**  <span style=\"font-size: 12px; font-weight: 500;\">required when seasonality is given</span>     The end date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`. 
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.main.ReplaceCatalogInput{Data: []MainAPISupplierCatalogItem{openapiclient.main.APISupplierCatalogItem{Allergens: []CatalogAllergen{openapiclient.catalog.Allergen{Symptoms: []string{"Symptoms_example"), Type: "Type_example"}), Availability: "Availability_example", Currency: "Currency_example", Description: "Description_example", Id: 123, Name: "Name_example", OrderCutoffTimes: openapiclient.catalog.OrderCutoffTimes{Fri: 123, Mon: 123, Thu: 123, Tue: 123, Wed: 123}, ProductCode: "ProductCode_example", ReplacementProducts: []string{"ReplacementProducts_example"), Seasonality: []CatalogSeasonality{openapiclient.catalog.Seasonality{EndDate: "EndDate_example", StartDate: "StartDate_example"}), UnitsPrices: []MainAPISupplierCatalogUnit{openapiclient.main.APISupplierCatalogUnit{PriceCents: 123, StockCount: 123, Unit: "Unit_example"})})} // MainReplaceCatalogInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.ReplaceCatalog(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.ReplaceCatalog``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `ReplaceCatalog`: MainSuccessConfirmation
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.ReplaceCatalog`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiReplaceCatalogRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**MainReplaceCatalogInput**](MainReplaceCatalogInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**MainReplaceCatalogInput**](MainReplaceCatalogInput.md) | Payload | 
 
 ### Return type
 
@@ -260,20 +501,53 @@ Name | Type | Description  | Notes
 
 ## ReplaceCatalogV3
 
-> V3SuccessConfirmation ReplaceCatalogV3(ctx, xREKKIAuthorizationType, input)
+> V3SuccessConfirmation ReplaceCatalogV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Drop all existing items from the catalog and upload new ones
 
-### Parameters  - **`id`** REKKI's ID to uniquely identify the catalog item (for REKKI internal reference). If `id` is specified the item will be update, if not it will attempt to insert it. - **`product_code`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> Product code for the item that maps to the supplier's catalog. Suppliers can modify the product code for future orders at https://supplier.rekki.com - **`name`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> Item name as would be defined on the customer's product list. - **`currency`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is GBP</span> Currency code for the price. In [ISO 4217][] three-letter format. - **`units_prices`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> List of units and their prices that the item can be ordered in. - **`units_prices.unit`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> A unit that the item can be ordered in. - **`units_prices.price_cents`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is 0</span> The order price in cents for the item per unit. For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50. - **`units_prices.stock_count`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> The number of items in stock for the related unit. - **`availability`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is \"in_stock\"</span> Availability status of the item. Can be \"in_stock\", \"out_of_stock\", or \"discontinued\". - **`description`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Short description of the item. - **`allergens`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of allergens for the item, if any. - **`allergens.type`**  <span style=\"font-size: 12px; font-weight: 500;\">required when allergens is given</span> Type of allergy. For example \"contains peanuts\" or \"may contain peanuts\". - **`allergens.symptoms`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of symptoms for the allergy. - **`order_cutoff_times`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Cutt-off times are the minimum amount of time before delivery when the item can still be ordered. - **`order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day. - **`replacement_products`**   <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of product codes for alternative items when this item is not available. - **`seasonality`**   <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of date ranges when the item is in-season. - **`seasonality.start_date`**  <span style=\"font-size: 12px; font-weight: 500;\">required when seasonality is given</span>   The start date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.   - **`seasonality.end_date`**  <span style=\"font-size: 12px; font-weight: 500;\">required when seasonality is given</span>     The end date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`. 
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.v3.ReplaceCatalogInput{Data: []V3APISupplierCatalogItem{openapiclient.v3.APISupplierCatalogItem{Allergens: []V3Allergens{openapiclient.v3.Allergens{Symptoms: []string{"Symptoms_example"), Type: "Type_example"}), Availability: "Availability_example", Currency: "Currency_example", Description: "Description_example", Id: 123, Name: "Name_example", OrderCutoffTimes: openapiclient.v3.OrderCutoffTimes{Fri: 123, Mon: 123, Thu: 123, Tue: 123, Wed: 123}, ProductCode: "ProductCode_example", ReplacementProducts: []string{"ReplacementProducts_example"), Seasonality: []V3Seasonality{openapiclient.v3.Seasonality{EndDate: "EndDate_example", StartDate: "StartDate_example"}), UnitsPrices: []V3APISupplierCatalogUnit{openapiclient.v3.APISupplierCatalogUnit{PriceCents: 123, StockCount: 123, Unit: "Unit_example"})})} // V3ReplaceCatalogInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.ReplaceCatalogV3(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.ReplaceCatalogV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `ReplaceCatalogV3`: V3SuccessConfirmation
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.ReplaceCatalogV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiReplaceCatalogV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**V3ReplaceCatalogInput**](V3ReplaceCatalogInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**V3ReplaceCatalogInput**](V3ReplaceCatalogInput.md) | Payload | 
 
 ### Return type
 
@@ -295,24 +569,57 @@ Name | Type | Description  | Notes
 
 ## UpdateCatalogItem
 
-> MainApiSupplierCatalogItem UpdateCatalogItem(ctx, xREKKIAuthorizationType, input)
+> MainAPISupplierCatalogItem UpdateCatalogItem(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Creates or Updates an item on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
 
-### Parameters  - **`id`** REKKI's ID to uniquely identify the catalog item (for REKKI internal reference). If `id` is specified the item will be update, if not it will attempt to insert it. - **`product_code`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> Product code for the item that maps to the supplier's catalog. Suppliers can modify the product code for future orders at https://supplier.rekki.com - **`name`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> Item name as would be defined on the customer's product list. - **`currency`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is GBP</span> Currency code for the price. In [ISO 4217][] three-letter format. - **`units_prices`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> List of units and their prices that the item can be ordered in. - **`units_prices.unit`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> A unit that the item can be ordered in. - **`units_prices.price_cents`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is 0</span> The order price in cents for the item per unit. For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50. - **`units_prices.stock_count`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> The number of items in stock for the related unit. - **`availability`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is \"in_stock\"</span> Availability status of the item. Can be \"in_stock\", \"out_of_stock\", or \"discontinued\". - **`description`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Short description of the item. - **`allergens`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of allergens for the item, if any. - **`allergens.type`**  <span style=\"font-size: 12px; font-weight: 500;\">required when allergens is given</span> Type of allergy. For example \"contains peanuts\" or \"may contain peanuts\". - **`allergens.symptoms`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of symptoms for the allergy. - **`order_cutoff_times`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Cutt-off times are the minimum amount of time before delivery when the item can still be ordered. - **`order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day. - **`replacement_products`**   <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of product codes for alternative items when this item is not available. - **`seasonality`**   <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of date ranges when the item is in-season. - **`seasonality.start_date`**  <span style=\"font-size: 12px; font-weight: 500;\">required when seasonality is given</span>   The start date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.   - **`seasonality.end_date`**  <span style=\"font-size: 12px; font-weight: 500;\">required when seasonality is given</span>     The end date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`. 
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.main.APISupplierCatalogItem{Allergens: []CatalogAllergen{openapiclient.catalog.Allergen{Symptoms: []string{"Symptoms_example"), Type: "Type_example"}), Availability: "Availability_example", Currency: "Currency_example", Description: "Description_example", Id: 123, Name: "Name_example", OrderCutoffTimes: openapiclient.catalog.OrderCutoffTimes{Fri: 123, Mon: 123, Thu: 123, Tue: 123, Wed: 123}, ProductCode: "ProductCode_example", ReplacementProducts: []string{"ReplacementProducts_example"), Seasonality: []CatalogSeasonality{openapiclient.catalog.Seasonality{EndDate: "EndDate_example", StartDate: "StartDate_example"}), UnitsPrices: []MainAPISupplierCatalogUnit{openapiclient.main.APISupplierCatalogUnit{PriceCents: 123, StockCount: 123, Unit: "Unit_example"})} // MainAPISupplierCatalogItem | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.UpdateCatalogItem(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.UpdateCatalogItem``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `UpdateCatalogItem`: MainAPISupplierCatalogItem
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.UpdateCatalogItem`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiUpdateCatalogItemRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**MainApiSupplierCatalogItem**](MainApiSupplierCatalogItem.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**MainAPISupplierCatalogItem**](MainAPISupplierCatalogItem.md) | Payload | 
 
 ### Return type
 
-[**MainApiSupplierCatalogItem**](main.APISupplierCatalogItem.md)
+[**MainAPISupplierCatalogItem**](main.APISupplierCatalogItem.md)
 
 ### Authorization
 
@@ -330,18 +637,51 @@ Name | Type | Description  | Notes
 
 ## UpdateCatalogItemAvailability
 
-> MainUpdateSuccess UpdateCatalogItemAvailability(ctx, xREKKIAuthorizationType, input)
+> MainUpdateSuccess UpdateCatalogItemAvailability(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Update availability status for one of the items in the catalog
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.main.SetStockStatusInput{Items: []MainStockItemState{openapiclient.main.StockItemState{Availability: "Availability_example", ProductCode: "ProductCode_example"})} // MainSetStockStatusInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.UpdateCatalogItemAvailability(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.UpdateCatalogItemAvailability``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `UpdateCatalogItemAvailability`: MainUpdateSuccess
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.UpdateCatalogItemAvailability`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiUpdateCatalogItemAvailabilityRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**MainSetStockStatusInput**](MainSetStockStatusInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**MainSetStockStatusInput**](MainSetStockStatusInput.md) | Payload | 
 
 ### Return type
 
@@ -363,18 +703,51 @@ Name | Type | Description  | Notes
 
 ## UpdateCatalogItemAvailabilityV3
 
-> V3UpdateSuccess UpdateCatalogItemAvailabilityV3(ctx, xREKKIAuthorizationType, input)
+> V3UpdateSuccess UpdateCatalogItemAvailabilityV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Update availability status for one of the items in the catalog
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.v3.SetStockStatusInput{Items: []V3StockItemState{openapiclient.v3.StockItemState{Availability: "Availability_example", ProductCode: "ProductCode_example"})} // V3SetStockStatusInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.UpdateCatalogItemAvailabilityV3(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.UpdateCatalogItemAvailabilityV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `UpdateCatalogItemAvailabilityV3`: V3UpdateSuccess
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.UpdateCatalogItemAvailabilityV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiUpdateCatalogItemAvailabilityV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**V3SetStockStatusInput**](V3SetStockStatusInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**V3SetStockStatusInput**](V3SetStockStatusInput.md) | Payload | 
 
 ### Return type
 
@@ -396,20 +769,53 @@ Name | Type | Description  | Notes
 
 ## UpdateCatalogItemsV3
 
-> V3CatalogItems UpdateCatalogItemsV3(ctx, xREKKIAuthorizationType, input)
+> V3CatalogItems UpdateCatalogItemsV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Creates or Updates multiple items on your catalog. If item with this product_code already exists, you can update this item. Item is looked up by product code
 
-### Parameters  - **`id`** REKKI's ID to uniquely identify the catalog item (for REKKI internal reference). If `id` is specified the item will be update, if not it will attempt to insert it. - **`product_code`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> Product code for the item that maps to the supplier's catalog. Suppliers can modify the product code for future orders at https://supplier.rekki.com - **`name`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> Item name as would be defined on the customer's product list. - **`currency`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is GBP</span> Currency code for the price. In [ISO 4217][] three-letter format. - **`units_prices`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> List of units and their prices that the item can be ordered in. - **`units_prices.unit`**  <span style=\"font-size: 12px; font-weight: 500;\">required</span> A unit that the item can be ordered in. - **`units_prices.price_cents`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is 0</span> The order price in cents for the item per unit. For example, a currency of GBP with unit 5L and price 850 means a 5L item can be ordered for £8.50. - **`units_prices.stock_count`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> The number of items in stock for the related unit. - **`availability`**  <span style=\"font-size: 12px; font-weight: 500;\">optional, default is \"in_stock\"</span> Availability status of the item. Can be \"in_stock\", \"out_of_stock\", or \"discontinued\". - **`description`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Short description of the item. - **`allergens`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of allergens for the item, if any. - **`allergens.type`**  <span style=\"font-size: 12px; font-weight: 500;\">required when allergens is given</span> Type of allergy. For example \"contains peanuts\" or \"may contain peanuts\". - **`allergens.symptoms`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of symptoms for the allergy. - **`order_cutoff_times`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Cutt-off times are the minimum amount of time before delivery when the item can still be ordered. - **`order_cutoff_times.{mon,tue,wed,thu,fri,sat,sun}`**  <span style=\"font-size: 12px; font-weight: 500;\">optional</span> Minimum amount of time, in hours, that an item needs to be ordered in advance of delivery for the given day. - **`replacement_products`**   <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of product codes for alternative items when this item is not available. - **`seasonality`**   <span style=\"font-size: 12px; font-weight: 500;\">optional</span> List of date ranges when the item is in-season. - **`seasonality.start_date`**  <span style=\"font-size: 12px; font-weight: 500;\">required when seasonality is given</span>   The start date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`.   - **`seasonality.end_date`**  <span style=\"font-size: 12px; font-weight: 500;\">required when seasonality is given</span>     The end date when the item is in season. In [ISO 8601][] calendar date format `YYYY-MM-DD`. 
 
-### Required Parameters
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.v3.UpdateCatalogInput{Data: []V3APISupplierCatalogItem{openapiclient.v3.APISupplierCatalogItem{Allergens: []V3Allergens{openapiclient.v3.Allergens{Symptoms: []string{"Symptoms_example"), Type: "Type_example"}), Availability: "Availability_example", Currency: "Currency_example", Description: "Description_example", Id: 123, Name: "Name_example", OrderCutoffTimes: openapiclient.v3.OrderCutoffTimes{Fri: 123, Mon: 123, Thu: 123, Tue: 123, Wed: 123}, ProductCode: "ProductCode_example", ReplacementProducts: []string{"ReplacementProducts_example"), Seasonality: []V3Seasonality{openapiclient.v3.Seasonality{EndDate: "EndDate_example", StartDate: "StartDate_example"}), UnitsPrices: []V3APISupplierCatalogUnit{openapiclient.v3.APISupplierCatalogUnit{PriceCents: 123, StockCount: 123, Unit: "Unit_example"})})} // V3UpdateCatalogInput | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.CatalogApi.UpdateCatalogItemsV3(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `CatalogApi.UpdateCatalogItemsV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `UpdateCatalogItemsV3`: V3CatalogItems
+    fmt.Fprintf(os.Stdout, "Response from `CatalogApi.UpdateCatalogItemsV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiUpdateCatalogItemsV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**V3UpdateCatalogInput**](V3UpdateCatalogInput.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**V3UpdateCatalogInput**](V3UpdateCatalogInput.md) | Payload | 
 
 ### Return type
 

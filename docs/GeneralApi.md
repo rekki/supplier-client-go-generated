@@ -11,18 +11,51 @@ Method | HTTP request | Description
 
 ## PostLogMessage
 
-> string PostLogMessage(ctx, xREKKIAuthorizationType, input)
+> string PostLogMessage(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.main.LogMessage{Level: "Level_example", Message: "Message_example"} // MainLogMessage | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.GeneralApi.PostLogMessage(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `GeneralApi.PostLogMessage``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `PostLogMessage`: string
+    fmt.Fprintf(os.Stdout, "Response from `GeneralApi.PostLogMessage`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPostLogMessageRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**MainLogMessage**](MainLogMessage.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**MainLogMessage**](MainLogMessage.md) | Payload | 
 
 ### Return type
 
@@ -44,18 +77,51 @@ Name | Type | Description  | Notes
 
 ## PostLogMessageV3
 
-> string PostLogMessageV3(ctx, xREKKIAuthorizationType, input)
+> string PostLogMessageV3(ctx).XREKKIAuthorizationType(xREKKIAuthorizationType).Input(input).Execute()
 
 Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
 
-### Required Parameters
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "./openapi"
+)
+
+func main() {
+    xREKKIAuthorizationType := "xREKKIAuthorizationType_example" // string | Required header
+    input := openapiclient.v3.LogMessage{Level: "Level_example", Message: "Message_example"} // V3LogMessage | Payload
+
+    configuration := openapiclient.NewConfiguration()
+    api_client := openapiclient.NewAPIClient(configuration)
+    resp, r, err := api_client.GeneralApi.PostLogMessageV3(context.Background(), xREKKIAuthorizationType, input).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `GeneralApi.PostLogMessageV3``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+    // response from `PostLogMessageV3`: string
+    fmt.Fprintf(os.Stdout, "Response from `GeneralApi.PostLogMessageV3`: %v\n", resp)
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPostLogMessageV3Request struct via the builder pattern
 
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
-**ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-**xREKKIAuthorizationType** | **string**| Required header | 
-**input** | [**V3LogMessage**](V3LogMessage.md)| Payload | 
+ **xREKKIAuthorizationType** | **string** | Required header | 
+ **input** | [**V3LogMessage**](V3LogMessage.md) | Payload | 
 
 ### Return type
 

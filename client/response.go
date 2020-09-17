@@ -1,5 +1,5 @@
 /*
- * Rekki.com Supply API
+ * Rekki.com Supplier API
  *
  * The base URL for all API endpoints is https://api.rekki.com  Api key value contains of word Bearer together with api key that you can get from integrations@rekki.com 
  *

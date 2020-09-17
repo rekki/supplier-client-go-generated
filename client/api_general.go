@@ -1,5 +1,5 @@
 /*
- * Rekki.com Supply API
+ * Rekki.com Supplier API
  *
  * The base URL for all API endpoints is https://api.rekki.com  Api key value contains of word Bearer together with api key that you can get from integrations@rekki.com 
  *
@@ -26,14 +26,43 @@ var (
 // GeneralApiService GeneralApi service
 type GeneralApiService service
 
+type ApiPostLogMessageRequest struct {
+	ctx _context.Context
+	ApiService *GeneralApiService
+	xREKKIAuthorizationType *string
+	input *MainLogMessage
+}
+
+func (r ApiPostLogMessageRequest) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiPostLogMessageRequest {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiPostLogMessageRequest) Input(input MainLogMessage) ApiPostLogMessageRequest {
+	r.input = &input
+	return r
+}
+
+func (r ApiPostLogMessageRequest) Execute() (string, *_nethttp.Response, error) {
+	return r.ApiService.PostLogMessageExecute(r)
+}
+
 /*
-PostLogMessage Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
+ * PostLogMessage Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return string
-*/
-func (a *GeneralApiService) PostLogMessage(ctx _context.Context, xREKKIAuthorizationType string, input MainLogMessage) (string, *_nethttp.Response, error) {
+ * @return ApiPostLogMessageRequest
+ */
+func (a *GeneralApiService) PostLogMessage(ctx _context.Context) ApiPostLogMessageRequest {
+	return ApiPostLogMessageRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return string
+ */
+func (a *GeneralApiService) PostLogMessageExecute(r ApiPostLogMessageRequest) (string, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -43,11 +72,22 @@ func (a *GeneralApiService) PostLogMessage(ctx _context.Context, xREKKIAuthoriza
 		localVarReturnValue  string
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v1/log"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GeneralApiService.PostLogMessage")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v1/log"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -66,27 +106,29 @@ func (a *GeneralApiService) PostLogMessage(ctx _context.Context, xREKKIAuthoriza
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}
@@ -117,14 +159,43 @@ func (a *GeneralApiService) PostLogMessage(ctx _context.Context, xREKKIAuthoriza
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiPostLogMessageV3Request struct {
+	ctx _context.Context
+	ApiService *GeneralApiService
+	xREKKIAuthorizationType *string
+	input *V3LogMessage
+}
+
+func (r ApiPostLogMessageV3Request) XREKKIAuthorizationType(xREKKIAuthorizationType string) ApiPostLogMessageV3Request {
+	r.xREKKIAuthorizationType = &xREKKIAuthorizationType
+	return r
+}
+func (r ApiPostLogMessageV3Request) Input(input V3LogMessage) ApiPostLogMessageV3Request {
+	r.input = &input
+	return r
+}
+
+func (r ApiPostLogMessageV3Request) Execute() (string, *_nethttp.Response, error) {
+	return r.ApiService.PostLogMessageV3Execute(r)
+}
+
 /*
-PostLogMessageV3 Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
+ * PostLogMessageV3 Post a log message for the supplier for internal debugging. There is no need to handle response from this endpoint
  * @param ctx _context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param xREKKIAuthorizationType Required header
- * @param input Payload
-@return string
-*/
-func (a *GeneralApiService) PostLogMessageV3(ctx _context.Context, xREKKIAuthorizationType string, input V3LogMessage) (string, *_nethttp.Response, error) {
+ * @return ApiPostLogMessageV3Request
+ */
+func (a *GeneralApiService) PostLogMessageV3(ctx _context.Context) ApiPostLogMessageV3Request {
+	return ApiPostLogMessageV3Request{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+/*
+ * Execute executes the request
+ * @return string
+ */
+func (a *GeneralApiService) PostLogMessageV3Execute(r ApiPostLogMessageV3Request) (string, *_nethttp.Response, error) {
 	var (
 		localVarHTTPMethod   = _nethttp.MethodPost
 		localVarPostBody     interface{}
@@ -134,11 +205,22 @@ func (a *GeneralApiService) PostLogMessageV3(ctx _context.Context, xREKKIAuthori
 		localVarReturnValue  string
 	)
 
-	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/integration/v3/log"
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "GeneralApiService.PostLogMessageV3")
+	if err != nil {
+		return localVarReturnValue, nil, GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/integration/v3/log"
+
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := _neturl.Values{}
 	localVarFormParams := _neturl.Values{}
+	if r.xREKKIAuthorizationType == nil {
+		return localVarReturnValue, nil, reportError("xREKKIAuthorizationType is required and must be specified")
+	}
+	if r.input == nil {
+		return localVarReturnValue, nil, reportError("input is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -157,27 +239,29 @@ func (a *GeneralApiService) PostLogMessageV3(ctx _context.Context, xREKKIAuthori
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(xREKKIAuthorizationType, "")
+	localVarHeaderParams["X-REKKI-Authorization-Type"] = parameterToString(*r.xREKKIAuthorizationType, "")
 	// body params
-	localVarPostBody = &input
-	if ctx != nil {
+	localVarPostBody = r.input
+	if r.ctx != nil {
 		// API Key Authentication
-		if auth, ok := ctx.Value(ContextAPIKey).(APIKey); ok {
-			var key string
-			if auth.Prefix != "" {
-				key = auth.Prefix + " " + auth.Key
-			} else {
-				key = auth.Key
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["ApiKeyAuth"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Authorization"] = key
 			}
-			localVarHeaderParams["Authorization"] = key
 		}
 	}
-	r, err := a.client.prepareRequest(ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, localVarFormFileName, localVarFileName, localVarFileBytes)
 	if err != nil {
 		return localVarReturnValue, nil, err
 	}
 
-	localVarHTTPResponse, err := a.client.callAPI(r)
+	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
 		return localVarReturnValue, localVarHTTPResponse, err
 	}

@@ -15,8 +15,8 @@ docs/CatalogSeasonality.md
 docs/GeneralApi.md
 docs/IntegrationOrder.md
 docs/IntegrationOrderItem.md
-docs/MainApiSupplierCatalogItem.md
-docs/MainApiSupplierCatalogUnit.md
+docs/MainAPISupplierCatalogItem.md
+docs/MainAPISupplierCatalogUnit.md
 docs/MainCatalogItems.md
 docs/MainFailedOrderError.md
 docs/MainGenericErrorResponse.md
@@ -31,9 +31,9 @@ docs/MainStockItemState.md
 docs/MainSuccessConfirmation.md
 docs/MainUpdateSuccess.md
 docs/OrdersApi.md
+docs/V3APISupplierCatalogItem.md
+docs/V3APISupplierCatalogUnit.md
 docs/V3Allergens.md
-docs/V3ApiSupplierCatalogItem.md
-docs/V3ApiSupplierCatalogUnit.md
 docs/V3AvailabilityError.md
 docs/V3AvailabilityErrorResponse.md
 docs/V3CatalogItems.md
@@ -107,3 +107,4 @@ model_v3_success_confirmation.go
 model_v3_update_catalog_input.go
 model_v3_update_success.go
 response.go
+utils.go
